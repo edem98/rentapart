@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     marginTop: -80,
   },
   elementSpacing: {
-    marginVertical: -10,
+    marginVertical: -5,
   },
   loginZone: {
     flexDirection: "row",

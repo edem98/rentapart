@@ -32,7 +32,7 @@ class DrawerContent extends React.Component {
                       : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png",
                   }}
                   size="large"
-                  renderPlaceholderContent={<ActivityIndicator />}
+                  renderPlaceholderContent={<ActivityIndicator color="#000" />}
                 />
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   {this.props.user.firstname ? (

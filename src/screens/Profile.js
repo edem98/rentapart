@@ -16,7 +16,7 @@ import { Avatar, Input, Header } from "react-native-elements";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/Ionicons";
 import Loading from "../components/Loading";
-
+import { StatusBar } from "expo-status-bar";
 // import auth action
 import { updateUser } from "../actions/authAction";
 import { connect } from "react-redux";
@@ -194,26 +194,27 @@ class Profile extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar style="light" animated={true} />
         <Header
           leftComponent={
             <Icon
               name="ios-menu"
               color="white"
               size={34}
-              style={{ paddingLeft: 15, marginBottom: 10 }}
+              style={{ paddingLeft: 15, marginBottom: 1 }}
               onPress={() => this.props.navigation.openDrawer()}
             />
           }
           centerComponent={{
             text: "Profile",
-            style: { color: "#fff", fontSize: 20, marginBottom: 10 },
+            style: { color: "#fff", fontSize: 20, marginBottom: 5 },
           }}
           containerStyle={{
             position: "absolute",
             top: 0,
             left: 0,
-            height: 60,
-            paddingTop: 20,
+            height: 70,
+            paddingTop: 30,
             width: "100%",
             backgroundColor: "#2C497F",
           }}
@@ -226,6 +227,7 @@ class Profile extends React.Component {
               width: "85%",
               justifyContent: "center",
               alignItems: "center",
+              marginTop: 20,
             }}
           >
             <Avatar

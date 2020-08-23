@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../components/FilterModal";
 // Import not find component
 import NotFound from "../components/NotFound";
+import { StatusBar } from "expo-status-bar";
 
 class PropertyHome extends React.Component {
   constructor(props) {
@@ -137,6 +138,7 @@ class PropertyHome extends React.Component {
     }
     return (
       <View style={styles.container}>
+        <StatusBar style="dark" setStatusBarStyle={{ marginBottom: 50 }} />
         <FlatList
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id.toString()}
