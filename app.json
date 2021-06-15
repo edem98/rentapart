@@ -2,21 +2,35 @@
   "expo": {
     "name": "rentapart",
     "slug": "rentapart",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
+    "sdkVersion": "37.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#2d497f"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": false,
+      "bundleIdentifier": "com.metamorphoo.rentapart",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.metamorphoo.rentapart",
+      "versionCode": 1
+    },
+    "description": ""
   }
 }

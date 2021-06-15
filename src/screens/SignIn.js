@@ -16,6 +16,8 @@ import axios from "axios";
 // import auth action
 import { signIn, setUserType } from "../actions/authAction";
 import { connect } from "react-redux";
+// loading component
+import Loading from "../components/Loading";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -26,6 +28,7 @@ class SignIn extends React.Component {
     this.state = {
       phone: "",
       password: "",
+      isConnecting: false,
     };
   }
 
@@ -96,6 +99,9 @@ class SignIn extends React.Component {
   };
 
   login = async () => {
+    this.setState({
+      isConnecting: true,
+    });
     if (this.isValidCredentials()) {
       // create request
       const api = axios.create({
@@ -132,6 +138,9 @@ class SignIn extends React.Component {
         ]
       );
     }
+    this.setState({
+      isConnecting: false,
+    });
   };
 
   render() {
@@ -141,50 +150,56 @@ class SignIn extends React.Component {
         style={styles.container}
         source={require("../../assets/signInBg.jpg")}
       >
-        <Image
-          source={require("../../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Input
-          placeholder="Numéro de téléphone"
-          placeholderTextColor={"white"}
-          inputStyle={{ color: "white", marginLeft: 10 }}
-          keyboardType={"numeric"}
-          leftIcon={<FontAwesome name="phone" size={30} color="white" />}
-          containerStyle={styles.elementSpacing}
-          onChangeText={(val) => {
-            this.setState({
-              phone: val,
-            });
-          }}
-        />
-        <Input
-          placeholder="Mot de passe"
-          placeholderTextColor={"white"}
-          inputStyle={{ color: "white", marginLeft: 10 }}
-          secureTextEntry={true}
-          leftIcon={<FontAwesome name="key" size={30} color="white" />}
-          containerStyle={styles.elementSpacing}
-          onChangeText={(val) => {
-            this.setState({
-              password: val.toLowerCase(),
-            });
-          }}
-        />
-        <TouchableOpacity
-          onPress={this.login}
-          style={[styles.elementSpacing, styles.loginZone]}
-        >
-          <AntDesign name="login" size={30} color="white" />
-          <Text style={styles.loginText}>Se connecter</Text>
-        </TouchableOpacity>
-        <Text style={styles.registerText}>Vous n'avez pas de compte ?</Text>
-        <TouchableWithoutFeedback
-          onPress={() => this.props.navigation.push("SignUp")}
-        >
-          <Text style={styles.register}>Créer un compte</Text>
-        </TouchableWithoutFeedback>
+        {this.state.isConnecting ? (
+          <Loading text="Connexion en cours..." />
+        ) : (
+          <>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Input
+              placeholder="Numéro de téléphone"
+              placeholderTextColor={"white"}
+              inputStyle={{ color: "white", marginLeft: 10 }}
+              keyboardType={"numeric"}
+              leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+              containerStyle={styles.elementSpacing}
+              onChangeText={(val) => {
+                this.setState({
+                  phone: val,
+                });
+              }}
+            />
+            <Input
+              placeholder="Mot de passe"
+              placeholderTextColor={"white"}
+              inputStyle={{ color: "white", marginLeft: 10 }}
+              secureTextEntry={true}
+              leftIcon={<FontAwesome name="key" size={30} color="white" />}
+              containerStyle={styles.elementSpacing}
+              onChangeText={(val) => {
+                this.setState({
+                  password: val.toLowerCase(),
+                });
+              }}
+            />
+            <TouchableOpacity
+              onPress={this.login}
+              style={[styles.elementSpacing, styles.loginZone]}
+            >
+              <AntDesign name="login" size={30} color="white" />
+              <Text style={styles.loginText}>Se connecter</Text>
+            </TouchableOpacity>
+            <Text style={styles.registerText}>Vous n'avez pas de compte ?</Text>
+            <TouchableWithoutFeedback
+              onPress={() => this.props.navigation.push("SignUp")}
+            >
+              <Text style={styles.register}>Créer un compte</Text>
+            </TouchableWithoutFeedback>
+          </>
+        )}
       </ImageBackground>
     );
   }

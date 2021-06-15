@@ -54,7 +54,6 @@ class PropertyDetail extends React.Component {
   };
 
   extractAgent = async (id) => {
-    console.log(id);
     // create request
     const api = axios.create({
       baseURL: `https://rentapart.herokuapp.com/api/operations/agent/account-id/${id}`,
@@ -82,17 +81,33 @@ class PropertyDetail extends React.Component {
   extractImage = (property) => {
     let property_images = [];
     if (property.second_image && property.third_image) {
-      property_images.push(property.featured_image);
-      property_images.push(property.second_image);
-      property_images.push(property.third_image);
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.featured_image
+      );
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.second_image
+      );
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.third_image
+      );
     } else if (property.second_image && !property.third_image) {
-      property_images.push(property.featured_image);
-      property_images.push(property.second_image);
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.featured_image
+      );
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.second_image
+      );
     } else if (!property.second_image && property.third_image) {
-      property_images.push(property.featured_image);
-      property_images.push(property.third_image);
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.featured_image
+      );
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.third_image
+      );
     } else {
-      property_images.push(property.featured_image);
+      property_images.push(
+        "http://rentapart.herokuapp.com" + property.featured_image
+      );
     }
     this.setState({
       images: property_images.reverse(),
@@ -195,7 +210,7 @@ class PropertyDetail extends React.Component {
             <View style={styles.propertyDetailZone}>
               <View style={styles.propertyAgentZone}>
                 <Image
-                  source={{ uri: this.state.agentAvatar }}
+                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
                   style={styles.agentImage}
                   PlaceholderContent={<ActivityIndicator />}
                 />
@@ -285,7 +300,7 @@ class PropertyDetail extends React.Component {
             <View style={styles.propertyDetailZone}>
               <View style={styles.propertyAgentZone}>
                 <Image
-                  source={{ uri: this.state.agentAvatar }}
+                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
                   style={styles.agentImage}
                   PlaceholderContent={<ActivityIndicator />}
                 />
@@ -375,7 +390,7 @@ class PropertyDetail extends React.Component {
             <View style={styles.propertyDetailZone}>
               <View style={styles.propertyAgentZone}>
                 <Image
-                  source={{ uri: this.state.agentAvatar }}
+                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
                   style={styles.agentImage}
                   PlaceholderContent={<ActivityIndicator />}
                 />

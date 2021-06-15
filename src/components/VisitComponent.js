@@ -144,7 +144,7 @@ const VisitScheduled = ({
           style={[styles.container, { height: scheduled == 1 ? 425 : 450 }]}
         >
           <Image
-            source={{ uri: property.featured_image }}
+            source={{ uri: "https://res.cloudinary.com/dwobnfrgh/" + property.featured_image }}
             containerStyle={styles.image}
             PlaceholderContent={<ActivityIndicator />}
             placeholderStyle={{
@@ -176,7 +176,7 @@ const VisitScheduled = ({
             <Image
               source={{
                 uri: client.profile_pic
-                  ? client.profile_pic
+                  ? "https://res.cloudinary.com/dwobnfrgh/" + client.profile_pic
                   : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png",
               }}
               style={styles.agentImage}
@@ -196,19 +196,19 @@ const VisitScheduled = ({
                     <Text style={styles.button}>Visite déja effectuer</Text>
                   </TouchableOpacity>
                 ) : (
-                  <CheckBox
-                    title="Marquer comme visité"
-                    checked={visit.visit_done}
-                    size={17}
-                    iconRight={true}
-                    textStyle={{ fontSize: 15 }}
-                    containerStyle={{
-                      backgroundColor: "white",
-                      padding: 10,
-                    }}
-                    onPress={() => setVisited(visit.id)}
-                  />
-                )}
+                    <CheckBox
+                      title="Marquer comme visité"
+                      checked={visit.visit_done}
+                      size={17}
+                      iconRight={true}
+                      textStyle={{ fontSize: 15 }}
+                      containerStyle={{
+                        backgroundColor: "white",
+                        padding: 10,
+                      }}
+                      onPress={() => setVisited(visit.id)}
+                    />
+                  )}
               </TouchableOpacity>
             </View>
           </View>
@@ -245,7 +245,7 @@ const VisitScheduled = ({
       >
         <View style={styles.container}>
           <Image
-            source={{ uri: property.featured_image }}
+            source={{ uri: "http://rentapart.herokuapp.com" + property.featured_image }}
             containerStyle={styles.image}
             PlaceholderContent={<ActivityIndicator />}
             placeholderStyle={{
@@ -277,7 +277,7 @@ const VisitScheduled = ({
             <Image
               source={{
                 uri: agent.profile_pic
-                  ? agent.profile_pic
+                  ? "http://rentapart.herokuapp.com" + agent.profile_pic
                   : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png",
               }}
               style={styles.agentImage}
@@ -294,21 +294,21 @@ const VisitScheduled = ({
                     <Text style={styles.button}>Visite effectuée</Text>
                   </TouchableOpacity>
                 ) : (
-                  <CheckBox
-                    title="Marquer comme visité"
-                    checked={visit.visit_done}
-                    size={17}
-                    iconRight={true}
-                    textStyle={{ fontSize: 13 }}
-                    containerStyle={{
-                      backgroundColor: "#f1f1f1",
-                      borderRadius: 10,
-                      marginLeft: 27,
-                      marginBottom: 15,
-                    }}
-                    onPress={() => setVisited(visit.id)}
-                  />
-                )}
+                    <CheckBox
+                      title="Marquer comme visité"
+                      checked={visit.visit_done}
+                      size={17}
+                      iconRight={true}
+                      textStyle={{ fontSize: 13 }}
+                      containerStyle={{
+                        backgroundColor: "#f1f1f1",
+                        borderRadius: 10,
+                        marginLeft: 27,
+                        marginBottom: 15,
+                      }}
+                      onPress={() => setVisited(visit.id)}
+                    />
+                  )}
               </TouchableOpacity>
             </View>
           </View>
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   propertyName: {
     color: "#000",
     fontWeight: "600",
-    fontSize: 23,
+    fontSize: 20,
     marginTop: 15,
     marginLeft: 10,
   },

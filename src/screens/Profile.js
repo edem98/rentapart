@@ -35,7 +35,7 @@ class Profile extends React.Component {
       email: this.props.user.email ? this.props.user.email : "",
       image: null,
       imageUri: this.props.user.profile_pic
-        ? this.props.user.profile_pic.split("?")[0]
+        ? "http://rentapart.herokuapp.com" + this.props.user.profile_pic
         : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png",
       imageChanged: false,
       isUpdating: false,
@@ -222,98 +222,98 @@ class Profile extends React.Component {
         {this.state.isUpdating ? (
           <Loading text="Mise à jour en cour..." />
         ) : (
-          <View
-            style={{
-              width: "85%",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 20,
-            }}
-          >
-            <Avatar
-              rounded
-              source={{
-                uri: this.state.imageUri.split("?")[0],
+            <View
+              style={{
+                width: "85%",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 20,
               }}
-              size="xlarge"
-              renderPlaceholderContent={<ActivityIndicator />}
-              showAccessory
-              containerStyle={{ marginVertical: screenHeight * 0.05 }}
-              onAccessoryPress={this._pickImage}
-            />
-            <Input
-              placeholder="Prénoms"
-              placeholderTextColor={"white"}
-              inputStyle={{ color: "white", marginLeft: 10 }}
-              leftIcon={<FontAwesome name="user" size={30} color="white" />}
-              containerStyle={styles.elementSpacing}
-              onChangeText={(val) => {
-                this.setState({
-                  firstname: val,
-                });
-              }}
-              defaultValue={
-                this.props.user.firstname ? this.props.user.firstname : ""
-              }
-            />
-            <Input
-              placeholder="Nom"
-              placeholderTextColor={"white"}
-              inputStyle={{ color: "white", marginLeft: 10 }}
-              leftIcon={<FontAwesome name="user" size={30} color="white" />}
-              containerStyle={styles.elementSpacing}
-              onChangeText={(val) => {
-                this.setState({
-                  lastname: val,
-                });
-              }}
-              defaultValue={
-                this.props.user.lastname ? this.props.user.lastname : ""
-              }
-            />
-            <Input
-              placeholder="Email"
-              placeholderTextColor={"white"}
-              inputStyle={{ color: "white", marginLeft: 10 }}
-              leftIcon={<FontAwesome name="envelope" size={30} color="white" />}
-              containerStyle={styles.elementSpacing}
-              onChangeText={(val) => {
-                this.setState({
-                  email: val.toLowerCase(),
-                });
-              }}
-              defaultValue={this.props.user.email ? this.props.user.email : ""}
-            />
-            <Input
-              placeholder="Numéro de téléphone"
-              placeholderTextColor={"white"}
-              inputStyle={{ color: "white", marginLeft: 10 }}
-              keyboardType={"numeric"}
-              leftIcon={<FontAwesome name="phone" size={30} color="white" />}
-              containerStyle={styles.elementSpacing}
-              onChangeText={(val) => {
-                this.setState({
-                  phone: val,
-                });
-              }}
-              defaultValue={this.props.user.phone}
-            />
-            <TouchableOpacity
-              onPress={this.update}
-              style={[styles.elementSpacing, styles.loginZone]}
             >
-              <MaterialCommunityIcons name="update" size={30} color="white" />
-              <Text style={styles.loginText}>Mettre à jour</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.push("ChangePassword")}
-            >
-              <Text style={{ marginTop: 30, color: "#fff", fontSize: 17 }}>
-                Modifier votre mot de passe ?
+              <Avatar
+                rounded
+                source={{
+                  uri: this.state.imageUri,
+                }}
+                size="xlarge"
+                renderPlaceholderContent={<ActivityIndicator />}
+                showAccessory
+                containerStyle={{ marginVertical: screenHeight * 0.05 }}
+                onAccessoryPress={this._pickImage}
+              />
+              <Input
+                placeholder="Prénoms"
+                placeholderTextColor={"white"}
+                inputStyle={{ color: "white", marginLeft: 10 }}
+                leftIcon={<FontAwesome name="user" size={30} color="white" />}
+                containerStyle={styles.elementSpacing}
+                onChangeText={(val) => {
+                  this.setState({
+                    firstname: val,
+                  });
+                }}
+                defaultValue={
+                  this.props.user.firstname ? this.props.user.firstname : ""
+                }
+              />
+              <Input
+                placeholder="Nom"
+                placeholderTextColor={"white"}
+                inputStyle={{ color: "white", marginLeft: 10 }}
+                leftIcon={<FontAwesome name="user" size={30} color="white" />}
+                containerStyle={styles.elementSpacing}
+                onChangeText={(val) => {
+                  this.setState({
+                    lastname: val,
+                  });
+                }}
+                defaultValue={
+                  this.props.user.lastname ? this.props.user.lastname : ""
+                }
+              />
+              <Input
+                placeholder="Email"
+                placeholderTextColor={"white"}
+                inputStyle={{ color: "white", marginLeft: 10 }}
+                leftIcon={<FontAwesome name="envelope" size={30} color="white" />}
+                containerStyle={styles.elementSpacing}
+                onChangeText={(val) => {
+                  this.setState({
+                    email: val.toLowerCase(),
+                  });
+                }}
+                defaultValue={this.props.user.email ? this.props.user.email : ""}
+              />
+              <Input
+                placeholder="Numéro de téléphone"
+                placeholderTextColor={"white"}
+                inputStyle={{ color: "white", marginLeft: 10 }}
+                keyboardType={"numeric"}
+                leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+                containerStyle={styles.elementSpacing}
+                onChangeText={(val) => {
+                  this.setState({
+                    phone: val,
+                  });
+                }}
+                defaultValue={this.props.user.phone}
+              />
+              <TouchableOpacity
+                onPress={this.update}
+                style={[styles.elementSpacing, styles.loginZone]}
+              >
+                <MaterialCommunityIcons name="update" size={30} color="white" />
+                <Text style={styles.loginText}>Mettre à jour</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.push("ChangePassword")}
+              >
+                <Text style={{ marginTop: 30, color: "#fff", fontSize: 17 }}>
+                  Modifier votre mot de passe ?
               </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              </TouchableOpacity>
+            </View>
+          )}
       </View>
     );
   }

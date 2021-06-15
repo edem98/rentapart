@@ -135,41 +135,42 @@ class PropertyHome extends React.Component {
       this.state.isLoading == false
     ) {
       return <NotFound text="Aucune Propriété disponible" />;
-    }
-    return (
-      <View style={styles.container}>
-        <StatusBar style="dark" setStatusBarStyle={{ marginBottom: 50 }} />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id.toString()}
-          data={this.state.properties}
-          renderItem={({ item }) => (
-            <View style={styles.space}>
-              <Property property={item} navigation={this.props.navigation} />
-            </View>
-          )}
-          onEndReached={this.loadMore}
-          onEndReachedThreshold={0}
-        />
-        {!this.state.isSearching ? (
-          <TouchableOpacity
-            style={styles.searchIconContainer}
-            onPress={this.search}
-          >
-            <Ionicons
-              name="ios-search"
-              size={40}
-              color="white"
-              style={{ marginLeft: 5, marginTop: 3, fontWeight: "bold" }}
-            />
-          </TouchableOpacity>
-        ) : null}
+    } else {
+      return (
+        <View style={styles.container}>
+          <StatusBar style="dark" setStatusBarStyle={{ marginBottom: 50 }} />
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id.toString()}
+            data={this.state.properties}
+            renderItem={({ item }) => (
+              <View style={styles.space}>
+                <Property property={item} navigation={this.props.navigation} />
+              </View>
+            )}
+            onEndReached={this.loadMore}
+            onEndReachedThreshold={0}
+          />
+          {!this.state.isSearching ? (
+            <TouchableOpacity
+              style={styles.searchIconContainer}
+              onPress={this.search}
+            >
+              <Ionicons
+                name="ios-search"
+                size={40}
+                color="white"
+                style={{ marginLeft: 5, marginTop: 3, fontWeight: "bold" }}
+              />
+            </TouchableOpacity>
+          ) : null}
 
-        {this.state.isSearching === true ? (
-          <FilterModal closeFilter={this.closeFilter} search={this.search} />
-        ) : null}
-      </View>
-    );
+          {this.state.isSearching === true ? (
+            <FilterModal closeFilter={this.closeFilter} search={this.search} />
+          ) : null}
+        </View>
+      );
+    }
   }
 }
 

@@ -15,6 +15,8 @@ import axios from "axios";
 // import auth action
 import { signUp } from "../actions/authAction";
 import { connect } from "react-redux";
+// loading component
+import Loading from "../components/Loading";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -26,6 +28,7 @@ class SignUp extends React.Component {
       phone: "",
       password: "",
       password2: "",
+      isCreating: false,
     };
   }
 
@@ -90,6 +93,9 @@ class SignUp extends React.Component {
   };
 
   createAccount = async () => {
+    this.setState({
+      isCreating: true,
+    });
     if (this.isValidCredentials()) {
       // create request
       const api = axios.create({
@@ -130,6 +136,9 @@ class SignUp extends React.Component {
         ]
       );
     }
+    this.setState({
+      isCreating: false,
+    });
   };
 
   render() {
@@ -139,57 +148,66 @@ class SignUp extends React.Component {
         style={styles.container}
         source={require("../../assets/signInBg.jpg")}
       >
-        <Image
-          source={require("../../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Input
-          placeholder="Numéro de téléphone"
-          placeholderTextColor={"white"}
-          inputStyle={{ color: "white", marginLeft: 10 }}
-          keyboardType={"numeric"}
-          leftIcon={<FontAwesome name="phone" size={30} color="white" />}
-          onChangeText={(val) => {
-            this.setState({
-              phone: val,
-            });
-          }}
-        />
-        <Input
-          placeholder="Mot de passe"
-          placeholderTextColor={"white"}
-          inputStyle={{ color: "white", marginLeft: 10 }}
-          secureTextEntry={true}
-          leftIcon={<FontAwesome name="key" size={30} color="white" />}
-          onChangeText={(val) => {
-            this.setState({
-              password: val,
-            });
-          }}
-        />
-        <Input
-          placeholder="Confirmer le Mot de passe"
-          placeholderTextColor={"white"}
-          inputStyle={{ color: "white", marginLeft: 10 }}
-          secureTextEntry={true}
-          leftIcon={<FontAwesome name="key" size={30} color="white" />}
-          onChangeText={(val) => {
-            this.setState({
-              password2: val,
-            });
-          }}
-        />
-        <TouchableOpacity onPress={this.createAccount} style={styles.loginZone}>
-          <AntDesign name="login" size={30} color="white" />
-          <Text style={styles.loginText}>Créer un compte</Text>
-        </TouchableOpacity>
-        <Text style={styles.registerText}>Vous avez déja un compte ?</Text>
-        <TouchableWithoutFeedback
-          onPress={() => this.props.navigation.push("SignIn")}
-        >
-          <Text style={styles.register}>Connectez-vous</Text>
-        </TouchableWithoutFeedback>
+        {this.state.isCreating ? (
+          <Loading text="Création du compte en cours..." />
+        ) : (
+          <>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Input
+              placeholder="Numéro de téléphone"
+              placeholderTextColor={"white"}
+              inputStyle={{ color: "white", marginLeft: 10 }}
+              keyboardType={"numeric"}
+              leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+              onChangeText={(val) => {
+                this.setState({
+                  phone: val,
+                });
+              }}
+            />
+            <Input
+              placeholder="Mot de passe"
+              placeholderTextColor={"white"}
+              inputStyle={{ color: "white", marginLeft: 10 }}
+              secureTextEntry={true}
+              leftIcon={<FontAwesome name="key" size={30} color="white" />}
+              onChangeText={(val) => {
+                this.setState({
+                  password: val,
+                });
+              }}
+            />
+            <Input
+              placeholder="Confirmer le Mot de passe"
+              placeholderTextColor={"white"}
+              inputStyle={{ color: "white", marginLeft: 10 }}
+              secureTextEntry={true}
+              leftIcon={<FontAwesome name="key" size={30} color="white" />}
+              onChangeText={(val) => {
+                this.setState({
+                  password2: val,
+                });
+              }}
+            />
+            <TouchableOpacity
+              onPress={this.createAccount}
+              style={styles.loginZone}
+            >
+              <AntDesign name="login" size={30} color="white" />
+              <Text style={styles.loginText}>Créer un compte</Text>
+            </TouchableOpacity>
+            <Text style={styles.registerText}>Vous avez déja un compte ?</Text>
+            <TouchableWithoutFeedback
+              onPress={() => this.props.navigation.push("SignIn")}
+            >
+              <Text style={styles.register}>Connectez-vous</Text>
+            </TouchableWithoutFeedback>
+          </>
+        )}
       </ImageBackground>
     );
   }

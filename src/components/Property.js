@@ -74,7 +74,8 @@ const Property = ({ property, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 320,
+    flex: 1,
+    maxHeight: 320,
     width: screenWidth - 20,
     alignSelf: "center",
     borderWidth: 2,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   propertyName: {
     color: "#000",
     fontWeight: "600",
-    fontSize: 23,
+    fontSize: 20,
     marginTop: 15,
     marginLeft: 10,
   },

@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginTop: 20,
+    paddingTop: 3,
   },
   loginText: {
     fontSize: 20,

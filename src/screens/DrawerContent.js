@@ -3,7 +3,6 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Avatar, Text } from "react-native-elements";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -28,7 +27,7 @@ class DrawerContent extends React.Component {
                   rounded
                   source={{
                     uri: this.props.user.profile_pic
-                      ? this.props.user.profile_pic.split("?")[0]
+                      ? "http://rentapart.herokuapp.com" + this.props.user.profile_pic
                       : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png",
                   }}
                   size="large"
@@ -42,8 +41,8 @@ class DrawerContent extends React.Component {
                       {this.props.user.lastname.toUpperCase()}
                     </Text>
                   ) : (
-                    <Text style={styles.title}>Prénoms Nom</Text>
-                  )}
+                      <Text style={styles.title}>Prénoms Nom</Text>
+                    )}
 
                   <Text style={styles.caption}>
                     +228{this.props.user.phone}
