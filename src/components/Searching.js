@@ -8,7 +8,7 @@ export default () => {
     <View style={styles.container}>
       <Image
         source={require("../../assets/search.gif")}
-        width={100}
+        style={{ width: 100 }}
         resizeMode="contain"
       />
     </View>
@@ -18,7 +18,7 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: screenWidth - 30,
+    width: screenWidth,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
