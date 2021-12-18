@@ -8,7 +8,7 @@ import rootReducer from "./src/reducers/RootReducer";
 // import redux and thunk
 import thunk from "redux-thunk";
 import { persistReducer, persistStore } from "redux-persist";
-import { AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PersistGate } from "redux-persist/integration/react";
 
 const persistConfig = {

@@ -442,8 +442,8 @@ class AddProperty extends React.Component {
               defaultValue={this.state.description.toString()}
             />
             {this.state.propertyType == "Une pièce" ||
-            this.state.propertyType == "Chambre Salon" ||
-            this.state.propertyType == "2 chambres Salon" ? null : (
+              this.state.propertyType == "Chambre Salon" ||
+              this.state.propertyType == "2 chambres Salon" ? null : (
               <Input
                 placeholder="Nombre de chambre/salle"
                 placeholderTextColor={"black"}
@@ -564,8 +564,8 @@ class AddProperty extends React.Component {
               defaultValue={this.state.price.toString()}
             />
             {this.state.propertyType == "Une pièce" ||
-            this.state.propertyType == "Chambre Salon" ||
-            this.state.propertyType == "2 chambres Salon" ? (
+              this.state.propertyType == "Chambre Salon" ||
+              this.state.propertyType == "2 chambres Salon" ? (
               <Input
                 placeholder="Nombre de ménages"
                 placeholderTextColor={"black"}
