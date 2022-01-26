@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import { Image } from "react-native-elements";
 import Feature from "../components/PropertyFeature";
@@ -41,6 +42,17 @@ class PropertyDetail extends React.Component {
   componentDidMount() {
     const propertyId = this.props.route.params.propertyId;
     this.getProperty(propertyId);
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        const propertyId = this.props.route.params.propertyId;
+        this.getProperty(propertyId);
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription();
   }
 
   formatPrice = (x) => {
@@ -56,7 +68,7 @@ class PropertyDetail extends React.Component {
   extractAgent = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/agent/account-id/${id}`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/agent/account-id/${id}`,
       headers: {
         Authorization: "Token b417a0b5827334c0657861a4dd148741ca517ddf",
       },
@@ -117,7 +129,7 @@ class PropertyDetail extends React.Component {
   getProperty = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/${id}`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/${id}`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -145,25 +157,20 @@ class PropertyDetail extends React.Component {
   sendVisitRequest = async () => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/schedule-visit/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/schedule-visit/`,
       headers: {
-        Authorization: "Token 12264c0b1c602d5e14b09fb3d8a9bc6e7c67d6ef",
+        Authorization: `Token ${this.props.user.token}`
       },
     });
     // send request for a visit on the current property
+    const data = {
+      property: this.state.property.id,
+      client: this.props.user.id,
+    }
     await api
-      .post(`/`, { client: "9", property: this.state.property.id })
+      .post(`/`, data)
       .then((res) =>
-        Alert.alert("SUCCÈS!!", res.data["response"], [
-          {
-            text: "Fermer",
-            onPress: () => {
-              this.setState({
-                visitAsked: true,
-              });
-            },
-          },
-        ])
+        this.sendWhatsAppMessage()
       )
       .catch((error) => alert(error));
   };
@@ -176,277 +183,146 @@ class PropertyDetail extends React.Component {
     ]);
   };
 
-  render() {
-    // visite not scheduled on this property
+  sendWhatsAppMessage = () => {
+    let link = "whatsapp://send?text=&phone=+228";
+    if (this.state.property.featured) {
+      link += this.state.agent.phone;
+    } else {
+      link += "92602051";
+    }
+    if (link !== undefined) {
+      Linking.canOpenURL(link)
+        .then(supported => {
+          if (!supported) {
+            Alert.alert(
+              'Please install whats app to send direct message to students via whats app'
+            );
+          } else {
+            return Linking.openURL(link);
+          }
+        })
+        .catch(err => console.error('An error occurred', err));
+    } else {
+      console.log('sendWhatsAppMessage -----> ', 'message link is undefined');
+    }
+  };
+
+  visitedState = () => {
     if (this.state.visitAsked == 0) {
       return (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <TouchableWithoutFeedback>
-            <Text style={styles.status}>{this.state.property.status}</Text>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Text style={styles.price}>
-              {this.formatPrice(this.state.price)} cfa
-            </Text>
-          </TouchableWithoutFeedback>
-          <View style={styles.container}>
-            <ScrollView
-              snapToInterval={screenWidth}
-              decelerationRate="fast"
-              horizontal
-            >
-              {this.state.images.map((source, index) => {
-                return (
-                  <View key={index}>
-                    <Image
-                      source={{ uri: source }}
-                      style={styles.propertyImage}
-                      PlaceholderContent={<ActivityIndicator />}
-                    />
-                  </View>
-                );
-              })}
-            </ScrollView>
-            <View style={styles.propertyDetailZone}>
-              <View style={styles.propertyAgentZone}>
-                <Image
-                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
-                  style={styles.agentImage}
-                  PlaceholderContent={<ActivityIndicator />}
-                />
-                <View>
-                  <Text style={styles.agentName}>
-                    {" "}
-                    {this.state.agent.firstname} {this.state.agent.lastname}{" "}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.buttonContainer}
-                    onPress={this.sendVisitRequest}
-                  >
-                    <Text style={styles.button}>Prendre rendez-vous</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.descriptionZone}>
-                <Text style={styles.description}>Description</Text>
-                <Text style={styles.descriptionText}>
-                  {this.state.property.description}
-                </Text>
-              </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Commodités</Text>
-                <View style={styles.commodityZone}>
-                  {this.state.feature.map((item, index) => {
-                    return <Commodity name={item.name} key={index} />;
-                  })}
-                </View>
-              </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Caractéristiques</Text>
-                <View style={styles.featuresZone}>
-                  <Feature
-                    name="Chambres - "
-                    value={this.state.property.bedrooms}
-                  />
-                  <Feature
-                    name="Douches - "
-                    value={this.state.property.bathrooms}
-                  />
-                  <Feature
-                    name="Garages - "
-                    value={this.state.property.garages}
-                  />
-                  <Feature
-                    name="Ménages - "
-                    value={this.state.property.households}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={this.sendVisitRequest}
+        >
+          <Text style={styles.button}>
+            Demander une visite
+          </Text>
+        </TouchableOpacity>
       );
-    }
-    // visite scheduled but not done
-    else if (this.state.visitAsked == 1) {
+    } else if (this.state.visitAsked == 1) {
       return (
-        <ScrollView>
-          <TouchableWithoutFeedback>
-            <Text style={styles.status}>{this.state.property.status}</Text>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Text style={styles.price}>
-              {this.formatPrice(this.state.price)} cfa
-            </Text>
-          </TouchableWithoutFeedback>
-          <View style={styles.container}>
-            <ScrollView
-              snapToInterval={screenWidth}
-              decelerationRate="fast"
-              horizontal
-            >
-              {this.state.images.map((source, index) => {
-                return (
-                  <View key={index}>
-                    <Image
-                      source={{ uri: source }}
-                      style={styles.propertyImage}
-                      PlaceholderContent={<ActivityIndicator />}
-                    />
-                  </View>
-                );
-              })}
-            </ScrollView>
-            <View style={styles.propertyDetailZone}>
-              <View style={styles.propertyAgentZone}>
-                <Image
-                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
-                  style={styles.agentImage}
-                  PlaceholderContent={<ActivityIndicator />}
-                />
-                <View>
-                  <Text style={styles.agentName}>
-                    {" "}
-                    {this.state.agent.firstname} {this.state.agent.lastname}{" "}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.visiteAskedButtonContainer}
-                    onPress={this.rememberAskedVisit}
-                  >
-                    <Text style={styles.button}>Demande en cours</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.descriptionZone}>
-                <Text style={styles.description}>Description</Text>
-                <Text style={styles.descriptionText}>
-                  {this.state.property.description}
-                </Text>
-              </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Commodités</Text>
-                <View style={styles.commodityZone}>
-                  {this.state.feature.map((item, index) => {
-                    return <Commodity name={item.name} key={index} />;
-                  })}
-                </View>
-              </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Caractéristiques</Text>
-                <View style={styles.featuresZone}>
-                  <Feature
-                    name="Chambres - "
-                    value={this.state.property.bedrooms}
-                  />
-                  <Feature
-                    name="Douches - "
-                    value={this.state.property.bathrooms}
-                  />
-                  <Feature
-                    name="Garages - "
-                    value={this.state.property.garages}
-                  />
-                  <Feature
-                    name="Ménages - "
-                    value={this.state.property.households}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+        <TouchableOpacity
+          style={styles.visiteAskedButtonContainer}
+          onPress={this.rememberAskedVisit}
+        >
+          <Text style={styles.button}>Visite programmée</Text>
+        </TouchableOpacity>
       );
-    }
-    // visite done
-    else {
+    } else {
       return (
-        <ScrollView>
-          <TouchableWithoutFeedback>
-            <Text style={styles.status}>{this.state.property.status}</Text>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Text style={styles.price}>
-              {this.formatPrice(this.state.price)} cfa
-            </Text>
-          </TouchableWithoutFeedback>
-          <View style={styles.container}>
-            <ScrollView
-              snapToInterval={screenWidth}
-              decelerationRate="fast"
-              horizontal
-            >
-              {this.state.images.map((source, index) => {
-                return (
-                  <View key={index}>
-                    <Image
-                      source={{ uri: source }}
-                      style={styles.propertyImage}
-                      PlaceholderContent={<ActivityIndicator />}
-                    />
-                  </View>
-                );
-              })}
-            </ScrollView>
-            <View style={styles.propertyDetailZone}>
-              <View style={styles.propertyAgentZone}>
-                <Image
-                  source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
-                  style={styles.agentImage}
-                  PlaceholderContent={<ActivityIndicator />}
-                />
-                <View>
-                  <Text style={styles.agentName}>
-                    {" "}
-                    {this.state.agent.firstname} {this.state.agent.lastname}{" "}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.visiteAskedButtonContainer}
-                    onPress={this.rememberAskedVisit}
-                  >
-                    <Text style={styles.button}>Visit déjà éffectué</Text>
-                  </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.visiteAskedButtonContainer}
+          onPress={this.rememberAskedVisit}
+        >
+          <Text style={styles.button}>Visit éffectué</Text>
+        </TouchableOpacity>
+      );
+    }
+  }
+
+  render() {
+    return (
+      <ScrollView>
+        <TouchableWithoutFeedback>
+          <Text style={styles.status}>{this.state.property.status}</Text>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback>
+          <Text style={styles.price}>
+            {this.formatPrice(this.state.price)} cfa
+          </Text>
+        </TouchableWithoutFeedback>
+        <View style={styles.container}>
+          <ScrollView
+            snapToInterval={screenWidth}
+            decelerationRate="fast"
+            horizontal
+          >
+            {this.state.images.map((source, index) => {
+              return (
+                <View key={index}>
+                  <Image
+                    source={{ uri: source }}
+                    style={styles.propertyImage}
+                    PlaceholderContent={<ActivityIndicator />}
+                  />
                 </View>
-              </View>
-              <View style={styles.descriptionZone}>
-                <Text style={styles.description}>Description</Text>
-                <Text style={styles.descriptionText}>
-                  {this.state.property.description}
+              );
+            })}
+          </ScrollView>
+          <View style={styles.propertyDetailZone}>
+            <View style={styles.propertyAgentZone}>
+              <Image
+                source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
+                style={styles.agentImage}
+                PlaceholderContent={<ActivityIndicator />}
+              />
+              <View>
+                <Text style={styles.agentName}>
+                  {" "}
+                  {this.state.agent.firstname} {this.state.agent.lastname}{" "}
                 </Text>
+                {this.visitedState()}
               </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Commodités</Text>
-                <View style={styles.commodityZone}>
-                  {this.state.feature.map((item, index) => {
-                    return <Commodity name={item.name} key={index} />;
-                  })}
-                </View>
+            </View>
+            <View style={styles.descriptionZone}>
+              <Text style={styles.description}>Description</Text>
+              <Text style={styles.descriptionText}>
+                {this.state.property.description}
+              </Text>
+            </View>
+            <View style={styles.caracteristiqueZone}>
+              <Text style={styles.caracteristique}>Commodités</Text>
+              <View style={styles.commodityZone}>
+                {this.state.feature.map((item, index) => {
+                  return <Commodity name={item.name} key={index} />;
+                })}
               </View>
-              <View style={styles.caracteristiqueZone}>
-                <Text style={styles.caracteristique}>Caractéristiques</Text>
-                <View style={styles.featuresZone}>
-                  <Feature
-                    name="Chambres - "
-                    value={this.state.property.bedrooms}
-                  />
-                  <Feature
-                    name="Douches - "
-                    value={this.state.property.bathrooms}
-                  />
-                  <Feature
-                    name="Garages - "
-                    value={this.state.property.garages}
-                  />
-                  <Feature
-                    name="Ménages - "
-                    value={this.state.property.households}
-                  />
-                </View>
+            </View>
+            <View style={styles.caracteristiqueZone}>
+              <Text style={styles.caracteristique}>Caractéristiques</Text>
+              <View style={styles.featuresZone}>
+                <Feature
+                  name="Chambres - "
+                  value={this.state.property.bedrooms}
+                />
+                <Feature
+                  name="Douches - "
+                  value={this.state.property.bathrooms}
+                />
+                <Feature
+                  name="Garages - "
+                  value={this.state.property.garages}
+                />
+                <Feature
+                  name="Ménages - "
+                  value={this.state.property.households}
+                />
               </View>
             </View>
           </View>
-        </ScrollView>
-      );
-    }
+        </View>
+      </ScrollView>
+    );
   }
 }
 
@@ -513,16 +389,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: screenWidth,
     padding: 20,
+    alignItems: "center",
   },
   agentImage: {
-    height: 100,
-    width: 100,
+    height: 70,
+    width: 70,
     borderRadius: 50,
   },
   agentName: {
-    fontSize: 20,
+    fontSize: 18,
     marginTop: 5,
-    marginBottom: 20,
+    marginBottom: 10,
     marginLeft: 28,
     fontWeight: "600",
     textAlign: "center",
@@ -531,13 +408,15 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     borderRadius: 20,
     width: screenWidth - 155,
-    height: 50,
+    height: 40,
     backgroundColor: "#5a86d8",
   },
   button: {
-    fontSize: 18,
+    fontSize: 15,
     textAlign: "center",
-    padding: 13,
+    paddingTop: 10,
+    paddingBottom: 5,
+    paddingHorizontal: 10,
     color: "#fff",
     fontWeight: "bold",
   },
@@ -545,19 +424,19 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     borderRadius: 20,
     width: screenWidth - 155,
-    height: 50,
+    height: 40,
     backgroundColor: "#ff6363",
   },
   descriptionZone: {
     padding: 20,
   },
   description: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   descriptionText: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 20,
   },
   caracteristiqueZone: {
@@ -565,7 +444,7 @@ const styles = StyleSheet.create({
     marginTop: -30,
   },
   caracteristique: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: "bold",
   },
   featuresZone: {

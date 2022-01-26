@@ -71,14 +71,15 @@ class AddProperty extends React.Component {
       districts: [],
       mainImage: this.props.route.params.property.featured_image
         ? this.props.route.params.property.featured_image
-        : "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        : "https://picsum.photos/200/300",
       secondImage: this.props.route.params.property.second_image
         ? this.props.route.params.property.second_image
-        : "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        : "https://picsum.photos/200/300",
       thirdImage: this.props.route.params.property.third_image
         ? this.props.route.params.property.third_image
-        : "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        : "https://picsum.photos/200/300",
       isAdding: false,
+      status: this.props.route.params.property.status ? this.props.route.params.property.status : "",
     };
   }
 
@@ -102,7 +103,7 @@ class AddProperty extends React.Component {
       : null;
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/list-features/`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/list-features/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -148,7 +149,7 @@ class AddProperty extends React.Component {
   getCities = async () => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/list-district/`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/list-district/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -300,7 +301,7 @@ class AddProperty extends React.Component {
 
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/create/`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/create/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
         "Content-Type": "multipart/form-data",
@@ -381,6 +382,7 @@ class AddProperty extends React.Component {
                 width: screenWidth - 40,
                 marginVertical: 10,
               }}
+              showArrowIcon={false}
               style={{ backgroundColor: "#fff" }}
               dropDownStyle={{
                 backgroundColor: "#fff",
@@ -411,6 +413,38 @@ class AddProperty extends React.Component {
                   });
                 }
               }}
+            />
+            <DropDownPicker
+              items={[
+                { label: "Location", value: "A Louer" },
+                { label: "Vente", value: "A Vendre" },
+                { label: "Baille", value: "A Bailler" },
+              ]}
+              searchable={true}
+              searchablePlaceholder="Recheche..."
+              searchableError="Aucun résultat"
+              placeholder="Type de bien"
+              labelStyle={{ fontSize: 17, color: "#000", fontWeight: "400" }}
+              defaultValue={this.props.route.params.property.type}
+              containerStyle={{
+                height: 50,
+                width: screenWidth - 40,
+                marginVertical: 10,
+              }}
+              showArrowIcon={false}
+              style={{ backgroundColor: "#fff" }}
+              dropDownStyle={{
+                backgroundColor: "#fff",
+                justifyContent: "center",
+                alignItems: "center",
+                width: screenWidth - 40,
+              }}
+              dropDownMaxHeight={300}
+              onChangeItem={(item) =>
+                this.setState({
+                  status: item.value,
+                })
+              }
             />
             <Input
               placeholder="Nom de la propriété"
@@ -587,6 +621,7 @@ class AddProperty extends React.Component {
               items={[
                 { label: "A Louer", value: "A Louer" },
                 { label: "A Vendre", value: "A Vendre" },
+                { label: "A Bailler", value: "A Bailler" },
               ]}
               placeholder="Status de la propriété"
               labelStyle={{ fontSize: 17, color: "#000", fontWeight: "400" }}

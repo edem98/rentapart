@@ -26,11 +26,22 @@ class VisitDone extends React.Component {
 
   componentDidMount() {
     this.getVisits();
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        const propertyId = this.props.route.params.propertyId;
+        this.getProperty(propertyId);
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription();
   }
 
   getVisits = async () => {
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/get-visit-done/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/get-visit-done/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },

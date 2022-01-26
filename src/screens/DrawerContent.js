@@ -3,8 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Avatar, Text } from "react-native-elements";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 
 // import auth action
 import { signOut } from "../actions/authAction";
@@ -22,7 +21,7 @@ class DrawerContent extends React.Component {
         <DrawerContentScrollView {...this.props}>
           <View style={styles.drawerContent}>
             <View style={styles.userInfoSection}>
-              <View style={{ flexDirection: "row", marginTop: 30 }}>
+              <View style={{ flexDirection: "row", marginTop: 15 }}>
                 <Avatar
                   rounded
                   source={{
@@ -41,24 +40,14 @@ class DrawerContent extends React.Component {
                       {this.props.user.lastname.toUpperCase()}
                     </Text>
                   ) : (
-                      <Text style={styles.title}>Prénoms Nom</Text>
-                    )}
+                    <Text style={styles.title}>Prénoms Nom</Text>
+                  )}
 
                   <Text style={styles.caption}>
                     +228{this.props.user.phone}
                   </Text>
                 </View>
               </View>
-              {/* <View style={styles.row}>
-                <View style={styles.section}>
-                  <Text
-                    style={[styles.paragraph, styles.caption, { fontSize: 16 }]}
-                  >
-                    Email:{" "}
-                  </Text>
-                  <Text style={styles.caption}>{this.props.user.email}</Text>
-                </View>
-              </View> */}
             </View>
 
             <Drawer.Section style={styles.drawerSection}>
@@ -68,11 +57,46 @@ class DrawerContent extends React.Component {
                 )}
                 label="Acceuil"
                 onPress={() => {
-                  this.props.navigation.navigate("Property", {
+                  this.props.navigation.navigate("Acceuil", {
                     screen: "PropertyHome",
                   });
                 }}
-                labelStyle={{ fontSize: 18 }}
+                labelStyle={{ fontSize: 16 }}
+                style={{ margin: 0 }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="airline-seat-flat"
+                    size={24}
+                    color="black"
+                  />
+                )}
+                label="Location"
+                onPress={() => {
+                  this.props.navigation.navigate("Location");
+                }}
+                labelStyle={{ fontSize: 16 }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons name="add-shopping-cart" size={24} color="black" />
+                )}
+                label="Vente"
+                onPress={() => {
+                  this.props.navigation.navigate("Vente");
+                }}
+                labelStyle={{ fontSize: 16 }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons name="apartment" size={24} color="black" />
+                )}
+                label="Bail"
+                onPress={() => {
+                  this.props.navigation.navigate("Bail");
+                }}
+                labelStyle={{ fontSize: 16 }}
               />
               <DrawerItem
                 icon={({ color, size }) => (
@@ -86,7 +110,27 @@ class DrawerContent extends React.Component {
                 onPress={() => {
                   this.props.navigation.navigate("Profile");
                 }}
-                labelStyle={{ fontSize: 18 }}
+                labelStyle={{ fontSize: 16 }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <AntDesign name="questioncircle" size={20} color="black" />
+                )}
+                label="Exprimer un besoin"
+                onPress={() => {
+                  this.props.navigation.navigate("Exprimer un besoin");
+                }}
+                labelStyle={{ fontSize: 16 }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialCommunityIcons name="offer" size={24} color="black" />
+                )}
+                label="Confier un bien"
+                onPress={() => {
+                  this.props.navigation.navigate("Confier un bien");
+                }}
+                labelStyle={{ fontSize: 16 }}
               />
               <DrawerItem
                 icon={({ color, size }) => (
@@ -94,9 +138,9 @@ class DrawerContent extends React.Component {
                 )}
                 label="Visites Programmées"
                 onPress={() => {
-                  this.props.navigation.navigate("ScheduledVisit");
+                  this.props.navigation.navigate("Visites programmées");
                 }}
-                labelStyle={{ fontSize: 18 }}
+                labelStyle={{ fontSize: 16 }}
               />
               <DrawerItem
                 icon={({ color, size }) => (
@@ -104,9 +148,9 @@ class DrawerContent extends React.Component {
                 )}
                 label="Visites Effectuées"
                 onPress={() => {
-                  this.props.navigation.navigate("VisitDone");
+                  this.props.navigation.navigate("Visites effectuées");
                 }}
-                labelStyle={{ fontSize: 18 }}
+                labelStyle={{ fontSize: 16 }}
               />
               {this.props.userType === "agent" ? (
                 <>
@@ -122,7 +166,7 @@ class DrawerContent extends React.Component {
                     onPress={() => {
                       this.props.navigation.navigate("AgentProperty");
                     }}
-                    labelStyle={{ fontSize: 18 }}
+                    labelStyle={{ fontSize: 16 }}
                   />
                   <DrawerItem
                     icon={({ color, size }) => (
@@ -139,7 +183,7 @@ class DrawerContent extends React.Component {
                         update: false,
                       });
                     }}
-                    labelStyle={{ fontSize: 18 }}
+                    labelStyle={{ fontSize: 16 }}
                   />
                 </>
               ) : null}
@@ -151,29 +195,15 @@ class DrawerContent extends React.Component {
                 onPress={() => {
                   this.props.navigation.navigate("Support");
                 }}
-                labelStyle={{ fontSize: 18 }}
+                labelStyle={{ fontSize: 16 }}
               />
             </Drawer.Section>
-            {/* <Drawer.Section title="Préferences">
-              <TouchableRipple
-                onPress={() => {
-                  toggleTheme();
-                }}
-              >
-                <View style={styles.preference}>
-                  <Text style={{ fontSize: 18 }}>Dark Theme</Text>
-                  <View pointerEvents="none">
-                    <Switch value={"dark"} />
-                  </View>
-                </View>
-              </TouchableRipple>
-            </Drawer.Section> */}
           </View>
         </DrawerContentScrollView>
         <Drawer.Section style={styles.bottomDrawerSection}>
           <DrawerItem
             icon={({ color, size }) => (
-              <Icon name="exit-to-app" color={color} size={size} />
+              <MaterialCommunityIcons name="exit-to-app" color={color} size={size} />
             )}
             label="Se déconnecter"
             onPress={() => {
@@ -217,10 +247,10 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: 17,
     lineHeight: 16,
-    marginTop: 10,
+    marginTop: 15,
   },
   row: {
-    marginTop: 20,
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -234,10 +264,10 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   drawerSection: {
-    marginTop: 15,
+    marginTop: 5,
   },
   bottomDrawerSection: {
-    marginBottom: 15,
+    marginBottom: 5,
     borderTopColor: "#f4f4f4",
     borderTopWidth: 1,
   },

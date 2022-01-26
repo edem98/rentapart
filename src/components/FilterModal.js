@@ -42,6 +42,7 @@ class FilterModal extends React.Component {
     Animated.timing(this.state.translateY, {
       toValue: -screenHeight,
       duration: 350,
+      useNativeDriver: true,
     }).start();
   }
 
@@ -49,6 +50,7 @@ class FilterModal extends React.Component {
     Animated.timing(this.state.translateY, {
       toValue: screenHeight,
       duration: 350,
+      useNativeDriver: true,
     }).start();
     setTimeout(() => {
       this.props.closeFilter();
@@ -67,21 +69,23 @@ class FilterModal extends React.Component {
         <View style={styles.filterZone}>
           <DropDownPicker
             items={[
-              { label: "Une pièce", value: "Une pièce" },
-              { label: "Chambre Salon", value: "Chambre Salon" },
-              { label: "2 chambres Salon", value: "2 chambres Salon" },
-              { label: "Villa", value: "Villa" },
-              { label: "Appartement", value: "Appartement" },
+              { label: "Studio", value: "Studio" },
+              { label: "Appartement simple", value: "Appartement simple" },
+              { label: "Appartement meublé", value: "Appartement meublé" },
+              { label: "Villa simple", value: "Villa simple" },
+              { label: "Villa meublé", value: "Villa meublé" },
               { label: "Bureau", value: "Bureau" },
               { label: "Terrain", value: "Terrain" },
+              { label: "Autres bien", value: "Autres bien" },
             ]}
-            placeholder="Type de propriété"
+            placeholder="Type de bien"
             labelStyle={{ fontSize: 17, color: "#000", fontWeight: "400" }}
             defaultValue={this.state.propertyType}
             containerStyle={{
               height: 50,
               width: screenWidth - 80,
-              marginBottom: 3,
+              marginBottom: 10,
+              marginTop: 10,
             }}
             style={{ backgroundColor: "#fff" }}
             dropDownStyle={{
@@ -97,15 +101,14 @@ class FilterModal extends React.Component {
               })
             }
           />
-          {this.state.propertyType == "Une pièce" ||
-          this.state.propertyType == "Chambre Salon" ||
-          this.state.propertyType == "2 chambres Salon" ||
-          this.state.propertyType == "Terrain" ||
-          this.state.propertyType == "Bureau" ? null : (
+          {this.state.propertyType == "Studio" ||
+            this.state.propertyType == "Appartement simple" ||
+            this.state.propertyType == "Appartement meublé" ||
+            this.state.propertyType == "Terrain" ? null : (
             <Input
               placeholder="Nombre de chambre"
               placeholderTextColor={"black"}
-              inputStyle={{ color: "black", marginLeft: 10 }}
+              inputStyle={styles.input}
               leftIcon={<FontAwesome name="bed" size={30} color="#5a86d8" />}
               keyboardType={"numeric"}
               containerStyle={styles.elementSpacing}
@@ -120,7 +123,7 @@ class FilterModal extends React.Component {
             <Input
               placeholder="Nombre de salle"
               placeholderTextColor={"black"}
-              inputStyle={{ color: "black", marginLeft: 10 }}
+              inputStyle={styles.input}
               leftIcon={<FontAwesome name="bed" size={30} color="#5a86d8" />}
               keyboardType={"numeric"}
               containerStyle={styles.elementSpacing}
@@ -131,14 +134,14 @@ class FilterModal extends React.Component {
               }}
             />
           ) : null}
-          {this.state.propertyType == "Une pièce" ||
-          this.state.propertyType == "Chambre Salon" ||
-          this.state.propertyType == "2 chambres Salon" ||
-          this.state.propertyType == "Terrain" ? null : (
+          {this.state.propertyType == "Studio" ||
+            this.state.propertyType == "Appartement simple" ||
+            this.state.propertyType == "Appartement meublé" ||
+            this.state.propertyType == "Terrain" ? null : (
             <Input
               placeholder="Nombre de douche"
               placeholderTextColor={"black"}
-              inputStyle={{ color: "black", marginLeft: 10 }}
+              inputStyle={styles.input}
               leftIcon={<FontAwesome name="shower" size={30} color="#5a86d8" />}
               containerStyle={styles.elementSpacing}
               keyboardType={"numeric"}
@@ -151,11 +154,11 @@ class FilterModal extends React.Component {
           )}
 
           {this.state.propertyType != "Terrain" ||
-          this.state.propertyType == "Une pièce" ? (
+            this.state.propertyType == "Studio" ? (
             <Input
               placeholder="Place de garages"
               placeholderTextColor={"black"}
-              inputStyle={{ color: "black", marginLeft: 10 }}
+              inputStyle={styles.input}
               leftIcon={
                 <FontAwesome5 name="parking" size={30} color="#5a86d8" />
               }
@@ -172,7 +175,7 @@ class FilterModal extends React.Component {
             <Input
               placeholder="Nombre de lot"
               placeholderTextColor={"black"}
-              inputStyle={{ color: "black", marginLeft: 10 }}
+              inputStyle={styles.input}
               leftIcon={
                 <MaterialIcons name="landscape" size={30} color="#5a86d8" />
               }
@@ -188,7 +191,7 @@ class FilterModal extends React.Component {
           <Input
             placeholder="Prix minimum"
             placeholderTextColor={"black"}
-            inputStyle={{ color: "black", marginLeft: 10 }}
+            inputStyle={styles.input}
             leftIcon={<FontAwesome name="money" size={30} color="#5a86d8" />}
             containerStyle={styles.elementSpacing}
             keyboardType={"numeric"}
@@ -201,7 +204,7 @@ class FilterModal extends React.Component {
           <Input
             placeholder="Prix maximum"
             placeholderTextColor={"black"}
-            inputStyle={{ color: "black", marginLeft: 10 }}
+            inputStyle={styles.input}
             leftIcon={<FontAwesome name="money" size={30} color="#5a86d8" />}
             containerStyle={styles.elementSpacing}
             keyboardType={"numeric"}
@@ -215,11 +218,11 @@ class FilterModal extends React.Component {
             onPress={() => this.props.search(this.state)}
             style={[styles.elementSpacing, styles.loginZone]}
           >
-            <AntDesign name="search1" size={30} color="white" />
+            <AntDesign name="search1" size={22} color="white" />
             <Text style={styles.loginText}>Rechercher</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.unmount} style={[styles.closeFilter]}>
-            <AntDesign name="closecircleo" size={30} color="white" />
+            <AntDesign name="closecircleo" size={25} color="white" />
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -250,17 +253,17 @@ const styles = StyleSheet.create({
   filterZone: {
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 20,
+    paddingTop: 10,
     paddingBottom: 20,
     paddingHorizontal: 10,
     width: screenWidth - 50,
-
+    overflow: "scroll",
     backgroundColor: "white",
     borderRadius: 15,
-    marginTop: -80,
+    marginTop: -60,
   },
   elementSpacing: {
-    marginVertical: -5,
+    marginVertical: -7,
   },
   loginZone: {
     flexDirection: "row",
@@ -274,7 +277,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 30,
-    marginTop: 10,
+    marginTop: 5,
   },
   closeFilter: {
     justifyContent: "center",
@@ -282,15 +285,18 @@ const styles = StyleSheet.create({
     borderColor: "white",
     backgroundColor: "red",
     borderWidth: 1,
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 25,
     marginTop: 20,
-    paddingTop: 3,
   },
   loginText: {
-    fontSize: 20,
+    fontSize: 18,
     color: "white",
     marginLeft: 10,
   },
+  input: {
+    color: "black",
+    fontSize: 15,
+  }
 });

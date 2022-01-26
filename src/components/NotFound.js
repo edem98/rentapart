@@ -7,7 +7,7 @@ const screenWidth = Dimensions.get("window").width;
 export default ({ text }) => {
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/not-found.gif")} />
+      <Image style={styles.imageStyle} source={require("../../assets/not-found.gif")} />
       <Text style={{ fontSize: 20, marginBottom: screenHeight * 0.2 }}>
         {text}
       </Text>
@@ -24,4 +24,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
   },
+  imageStyle: {
+    width: 200,
+    height: 200,
+  }
 });

@@ -27,6 +27,16 @@ class ScheduledVisit extends React.Component {
 
   componentDidMount() {
     this.getVisits();
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        this.getVisits();
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription();
   }
 
   removeVisit = (visitId) => {
@@ -41,7 +51,7 @@ class ScheduledVisit extends React.Component {
   setVisitDone = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/set-visit-done/${id}/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/set-visit-done/${id}/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -74,7 +84,7 @@ class ScheduledVisit extends React.Component {
 
   getVisits = async () => {
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/get-scheduled-visit/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/get-scheduled-visit/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },

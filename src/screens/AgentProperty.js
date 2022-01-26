@@ -27,7 +27,7 @@ class AgentProperty extends React.Component {
       properties: [],
       isLoading: true,
       next: null,
-      url: `https://rentapart.herokuapp.com/api/property/agent-property-list`,
+      url: `https://www.alkebulan-immo.com/api/property/agent-property-list`,
       isSearching: false,
     };
   }
@@ -59,7 +59,7 @@ class AgentProperty extends React.Component {
   updateDatabase = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/toggle-property-active/${id}`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/toggle-property-active/${id}`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
+    padding: 10,
   },
   searchIconContainer: {
     position: "absolute",

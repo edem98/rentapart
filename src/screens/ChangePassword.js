@@ -8,8 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { Header, Input } from "react-native-elements";
-import Icon from "react-native-vector-icons/Ionicons";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-icons";
 // axios
 import axios from "axios";
 // import auth action
@@ -46,7 +45,7 @@ class ChangePassword extends React.Component {
     });
     if (this.isValidCredentials()) {
       let url =
-        "https://rentapart.herokuapp.com/api/operations/user-change-password/";
+        "https://www.alkebulan-immo.com/api/operations/user-change-password/";
 
       // create request
       const api = axios.create({
@@ -100,7 +99,7 @@ class ChangePassword extends React.Component {
       <View style={styles.container}>
         <Header
           leftComponent={
-            <Icon
+            <Ionicons
               name="ios-arrow-back"
               color="white"
               size={23}
@@ -130,9 +129,8 @@ class ChangePassword extends React.Component {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 100, marginBottom: 20, color: "#fff" }}>
-              R
-            </Text>
+            <MaterialIcons name="vpn-key" size={100} color="white"
+              style={{ marginBottom: 30, marginTop: 10 }} />
             <Input
               placeholder="Ancien mot de passe"
               placeholderTextColor={"white"}

@@ -38,7 +38,7 @@ const VisitScheduled = ({
   async function getProperty(propertyid) {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/property/${propertyid}/`,
+      baseURL: `https://www.alkebulan-immo.com/api/property/${propertyid}/`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -65,7 +65,7 @@ const VisitScheduled = ({
   async function extractClient(clientId) {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/client/account-id/${clientId}`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/client/account-id/${clientId}`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -87,7 +87,7 @@ const VisitScheduled = ({
   async function extractAgent(id) {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/agent/account-id/${id}`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/agent/account-id/${id}`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -110,7 +110,7 @@ const VisitScheduled = ({
     console.log(id);
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/client-rate-visit/${id}/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/client-rate-visit/${id}/`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -134,7 +134,7 @@ const VisitScheduled = ({
     return (
       <TouchableWithoutFeedback
         onPress={() =>
-          navigation.navigate("Property", {
+          navigation.navigate("Acceuil", {
             screen: "PropertyDetail",
             params: { propertyId: propertyId, visitAsked: scheduled },
           })
@@ -154,7 +154,7 @@ const VisitScheduled = ({
               borderTopRightRadius: 10,
             }}
           />
-          <TouchableWithoutFeedback onPress={() => console.log("Stauts")}>
+          <TouchableWithoutFeedback>
             <Text style={styles.status}>{property.status}</Text>
           </TouchableWithoutFeedback>
           <View style={styles.featureZone}>
@@ -196,23 +196,23 @@ const VisitScheduled = ({
                     <Text style={styles.button}>Visite déja effectuer</Text>
                   </TouchableOpacity>
                 ) : (
-                    <CheckBox
-                      title="Marquer comme visité"
-                      checked={visit.visit_done}
-                      size={17}
-                      iconRight={true}
-                      textStyle={{ fontSize: 15 }}
-                      containerStyle={{
-                        backgroundColor: "white",
-                        padding: 10,
-                      }}
-                      onPress={() => setVisited(visit.id)}
-                    />
-                  )}
+                  <CheckBox
+                    title="Marquer comme visité"
+                    checked={visit.visit_done}
+                    size={17}
+                    iconRight={true}
+                    textStyle={{ fontSize: 15 }}
+                    containerStyle={{
+                      backgroundColor: "white",
+                      padding: 10,
+                    }}
+                    onPress={() => setVisited(visit.id)}
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
-          {scheduled != 1 ? (
+          {scheduled == 2 ? (
             <Rating
               count={5}
               imageSize={30}
@@ -237,13 +237,13 @@ const VisitScheduled = ({
     return (
       <TouchableWithoutFeedback
         onPress={() =>
-          navigation.navigate("Property", {
+          navigation.navigate("Acceuil", {
             screen: "PropertyDetail",
             params: { propertyId: propertyId, visitAsked: scheduled },
           })
         }
       >
-        <View style={styles.container}>
+        <View style={[styles.container, { height: scheduled == 1 ? 420 : 450 }]}>
           <Image
             source={{ uri: "http://rentapart.herokuapp.com" + property.featured_image }}
             containerStyle={styles.image}
@@ -255,7 +255,7 @@ const VisitScheduled = ({
               borderTopRightRadius: 10,
             }}
           />
-          <TouchableWithoutFeedback onPress={() => console.log("Stauts")}>
+          <TouchableWithoutFeedback>
             <Text style={styles.status}>{property.status}</Text>
           </TouchableWithoutFeedback>
           <View style={styles.featureZone}>
@@ -294,40 +294,42 @@ const VisitScheduled = ({
                     <Text style={styles.button}>Visite effectuée</Text>
                   </TouchableOpacity>
                 ) : (
-                    <CheckBox
-                      title="Marquer comme visité"
-                      checked={visit.visit_done}
-                      size={17}
-                      iconRight={true}
-                      textStyle={{ fontSize: 13 }}
-                      containerStyle={{
-                        backgroundColor: "#f1f1f1",
-                        borderRadius: 10,
-                        marginLeft: 27,
-                        marginBottom: 15,
-                      }}
-                      onPress={() => setVisited(visit.id)}
-                    />
-                  )}
+                  <CheckBox
+                    title="Marquer comme visité"
+                    checked={visit.visit_done}
+                    size={17}
+                    iconRight={true}
+                    textStyle={{ fontSize: 13 }}
+                    containerStyle={{
+                      backgroundColor: "#f1f1f1",
+                      borderRadius: 10,
+                      marginLeft: 27,
+                      marginBottom: 15,
+                    }}
+                    onPress={() => setVisited(visit.id)}
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
-          <Rating
-            count={5}
-            imageSize={30}
-            startingValue={1}
-            type="heart"
-            defaultRating={0}
-            size={1}
-            ratingColor="#203260"
-            style={{
-              height: 40,
-              marginTop: -25,
-              marginLeft: 65,
-            }}
-            readonly={scheduled == 2 ? true : false}
-            onFinishRating={(val) => rateVisite(val, visit.id)}
-          />
+          {scheduled == 2 ? (
+            <Rating
+              count={5}
+              imageSize={30}
+              startingValue={1}
+              type="heart"
+              defaultRating={0}
+              size={1}
+              ratingColor="#203260"
+              style={{
+                height: 40,
+                marginTop: -15,
+                marginLeft: 65,
+              }}
+              readonly={scheduled == 2 ? true : false}
+              onFinishRating={(val) => rateVisite(val, visit.id)}
+            ></Rating>
+          ) : null}
         </View>
       </TouchableWithoutFeedback>
     );
@@ -415,27 +417,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
-  priceText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#5a86d8",
-    marginTop: 15,
-    width: 150,
-  },
-  moreInfo: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: "#fff",
-    marginTop: 17,
-    height: 40,
-    width: 150,
-    padding: 5,
-    textAlign: "center",
-    backgroundColor: "#ff6363",
-  },
   agentName: {
     fontSize: 20,
-    marginTop: 5,
     marginLeft: 28,
     fontWeight: "600",
     marginBottom: 8,
@@ -456,13 +439,6 @@ const styles = StyleSheet.create({
 
     fontWeight: "bold",
     textAlign: "center",
-  },
-  visiteAskedButtonContainer: {
-    marginLeft: 25,
-    borderRadius: 20,
-    width: screenWidth - 185,
-    height: 50,
-    backgroundColor: "#ff6363",
   },
   propertyAgentZone: {
     flexDirection: "row",

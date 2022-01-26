@@ -21,7 +21,7 @@ class Splash extends React.Component {
         source={require("../../assets/signInBg.jpg")}
       >
         <Image
-          source={require("../../assets/logo.png")}
+          source={require("../../assets/logo.jpeg")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   logo: {
-    height: screenHeight * 0.1,
+    height: screenHeight * 0.2,
     width: screenWidth - 30,
     marginTop: 20,
     marginBottom: screenHeight * 0.1,

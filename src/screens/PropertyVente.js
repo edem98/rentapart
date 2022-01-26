@@ -14,7 +14,7 @@ import FilterModal from "../components/FilterModal";
 import NotFound from "../components/NotFound";
 import { StatusBar } from "expo-status-bar";
 
-class PropertyHome extends React.Component {
+class PropertyVente extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,23 +23,13 @@ class PropertyHome extends React.Component {
       properties: [],
       isLoading: true,
       next: null,
-      url: `https://www.alkebulan-immo.com/api/property/list`,
+      url: `https://www.alkebulan-immo.com/api/property/list?status=A%20Vendre`,
       isSearching: false,
     };
   }
 
   componentDidMount() {
     this.getProperties(this.state.url);
-    this.willFocusSubscription = this.props.navigation.addListener(
-      'willFocus',
-      () => {
-        this.getProperties(this.state.url);
-      }
-    );
-  }
-
-  componentWillUnmount() {
-    this.willFocusSubscription();
   }
 
   search = (params) => {
@@ -150,12 +140,13 @@ class PropertyHome extends React.Component {
         <View style={styles.container}>
           <StatusBar style="dark" setStatusBarStyle={{ marginBottom: 50 }} />
           <FlatList
-            style={{ backgroundColor: '#fff' }}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item.id.toString()}
             data={this.state.properties}
             renderItem={({ item }) => (
-              <Property property={item} navigation={this.props.navigation} />
+              <View style={styles.space}>
+                <Property property={item} navigation={this.props.navigation} />
+              </View>
             )}
             onEndReached={this.loadMore}
             onEndReachedThreshold={0}
@@ -195,7 +186,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PropertyHome);
+export default connect(mapStateToProps, mapDispatchToProps)(PropertyVente);
 
 const styles = StyleSheet.create({
   container: {
@@ -210,8 +201,8 @@ const styles = StyleSheet.create({
     right: 20,
     backgroundColor: "#5a86d8",
     zIndex: 1000,
-    width: 60,
-    height: 60,
+    width: 65,
+    height: 65,
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
@@ -226,7 +217,6 @@ const styles = StyleSheet.create({
   },
   space: {
     marginVertical: 10,
-    backgroundColor: "#fff",
   },
   noResult: {
     fontSize: 22,

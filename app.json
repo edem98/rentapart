@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "rentapart",
-    "slug": "rentapart",
+    "name": "Alkebulan-IMMO",
+    "slug": "alkebulan-immo",
     "platforms": [
       "ios",
       "android",
@@ -11,8 +11,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover",
       "backgroundColor": "#2d497f"
     },
     "updates": {

@@ -12,12 +12,12 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 export default ({ name, value }) => {
   let iconame = "ios-home";
   let itype = "ionicon";
-  let isize = 60;
+  let isize = 40;
   switch (name) {
     case "Garages - ":
       iconame = "warehouse";
       itype = "FontAwesome 5";
-      isize = 45;
+      isize = 30;
       break;
     case "Douches - ":
       iconame = "bath";
@@ -26,7 +26,7 @@ export default ({ name, value }) => {
     case "Ménages - ":
       iconame = "group";
       itype = "FontAwesome";
-      isize = 50;
+      isize = 40;
       break;
     case "Chambres - ":
       iconame = "ios-bed";
@@ -50,7 +50,7 @@ export default ({ name, value }) => {
         <MaterialCommunityIcons
           name={iconame}
           type={itype}
-          size={60}
+          size={40}
           color="#ff6363"
         />
         <Text style={styles.feature}>
@@ -89,12 +89,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 70,
     width: screenWidth - 20,
-    marginTop: 20,
+    marginTop: 10,
   },
   feature: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    marginTop: 15,
+    marginTop: 5,
     padding: 5,
     marginLeft: 10,
   },

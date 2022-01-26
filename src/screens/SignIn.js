@@ -43,9 +43,9 @@ class SignIn extends React.Component {
   setUser = async (token) => {
     let url = "";
     if (this.props.userType === "client") {
-      url = `https://rentapart.herokuapp.com/api/operations/client/account/`;
+      url = `https://www.alkebulan-immo.com/api/operations/client/account/`;
     } else if (this.props.userType === "agent") {
-      url = `https://rentapart.herokuapp.com/api/operations/agent/account/`;
+      url = `https://www.alkebulan-immo.com/api/operations/agent/account/`;
     } else {
       console.log("error occured");
       console.log(url);
@@ -82,7 +82,7 @@ class SignIn extends React.Component {
   fetchUserType = async (token) => {
     // create request
     const api = axios.create({
-      baseURL: `https://rentapart.herokuapp.com/api/operations/account/type/`,
+      baseURL: `https://www.alkebulan-immo.com/api/operations/account/type/`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -105,7 +105,7 @@ class SignIn extends React.Component {
     if (this.isValidCredentials()) {
       // create request
       const api = axios.create({
-        baseURL: `https://rentapart.herokuapp.com/api/operations/login/`,
+        baseURL: `https://www.alkebulan-immo.com/api/operations/login/`,
       });
       // send request for a visit on the current property
       await api
@@ -155,7 +155,7 @@ class SignIn extends React.Component {
         ) : (
           <>
             <Image
-              source={require("../../assets/logo.png")}
+              source={require("../../assets/logo.jpeg")}
               style={styles.logo}
               resizeMode="contain"
             />
@@ -231,10 +231,10 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   logo: {
-    height: screenHeight * 0.1,
+    height: screenHeight * 0.2,
     width: screenWidth - 30,
     marginTop: 20,
-    marginBottom: screenHeight * 0.1,
+    marginBottom: screenHeight * 0.05,
   },
   loginZone: {
     flexDirection: "row",
@@ -247,10 +247,11 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 30,
-    marginTop: 50,
+    marginTop: 30,
+    marginBottom: 10,
   },
   elementSpacing: {
-    marginVertical: 10,
+    marginVertical: 5,
   },
   loginText: {
     fontSize: 20,
@@ -260,11 +261,11 @@ const styles = StyleSheet.create({
   registerText: {
     color: "white",
     marginTop: 20,
-    fontSize: 20,
+    fontSize: 16,
   },
   register: {
     color: "white",
     marginTop: 10,
-    fontSize: 20,
+    fontSize: 16,
   },
 });

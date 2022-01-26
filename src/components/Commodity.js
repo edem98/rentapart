@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   featureName: {
-    fontSize: 18,
+    fontSize: 16,
     marginLeft: 8,
     marginTop: -5,
   },

@@ -21,34 +21,12 @@ class Support extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header
-          leftComponent={
-            <Icon
-              name="ios-menu"
-              color="black"
-              size={34}
-              style={{ paddingLeft: 15 }}
-              onPress={() => this.props.navigation.openDrawer()}
-            />
-          }
-          centerComponent={{
-            text: "Support",
-            style: { color: "#000", fontSize: 20 },
-          }}
-          containerStyle={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            backgroundColor: "#f9f9f9",
-          }}
-        />
         <Text style={{ fontSize: 25, marginBottom: 20 }}>Contact</Text>
         <Text style={{ fontSize: 17, marginBottom: 10 }}>
-          Email: support@rentaprt.com
+          Email: support@alkebulan.com
         </Text>
         <Text style={{ fontSize: 17, marginBottom: 10 }}>
-          Téléphone: 92639417/98929371{" "}
+          phone: +228-98-60-20-51
         </Text>
       </View>
     );
