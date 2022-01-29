@@ -271,6 +271,7 @@ class AddProperty extends React.Component {
       form_data.append("households", households);
     }
     if (propertiesFeature) {
+      console.log(property_features);
       form_data.append("property_features", JSON.stringify(property_features));
     }
     if (mainImage) {
@@ -298,7 +299,6 @@ class AddProperty extends React.Component {
       form_data.append("address", address);
     }
     form_data.append("agent", this.props.user.id);
-
     // create request
     const api = axios.create({
       baseURL: `https://www.alkebulan-immo.com/api/property/create/`,

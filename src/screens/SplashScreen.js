@@ -21,7 +21,7 @@ class Splash extends React.Component {
         source={require("../../assets/signInBg.jpg")}
       >
         <Image
-          source={require("../../assets/logo.jpeg")}
+          source={require("../../assets/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />

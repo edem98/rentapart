@@ -47,60 +47,6 @@ class SignUp extends React.Component {
     return true;
   };
 
-  setUser = async (token) => {
-    // create request
-    let url = "";
-    if (this.props.user.userType === "client") {
-      url = `https://www.alkebulan-immo.com/api/operations/client/account/`;
-    } else if (this.props.user.userType === "agent") {
-      url = `https://www.alkebulan-immo.com/api/operations/agent/account/`;
-    }
-    const api = axios.create({
-      baseURL: url,
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
-    // send request for a visit on the current property
-    await api
-      .get("/")
-      .then((res) => {
-        this.props.signUp({
-          email: res.data["email"],
-          id: res.data["id"],
-          firstname: res.data["firstname"],
-          lastname: res.data["lastname"],
-          phone: res.data["phone"],
-          password: this.state.password,
-          token: res.data["token"],
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-
-  };
-
-  fetchUserType = async (token) => {
-    // create request
-    const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/account/type/`,
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    });
-    // send request for a visit on the current property
-    let data = await api
-      .get("/")
-      .then((res) => res.data)
-      .catch((error) => {
-        console.log(error);
-      });
-    this.props.setUserType({ userType: this.state.userType });
-    this.setUser(token);
-  };
-
   createAccount = async () => {
     this.setState({
       isCreating: true,
@@ -126,7 +72,16 @@ class SignUp extends React.Component {
             {
               text: "Fermer",
               onPress: () => {
-                this.fetchUserType(this.state.userType);
+                this.props.setUserType({ userType: this.state.userType });
+                this.props.signUp({
+                  email: res.data["email"],
+                  id: res.data["id"],
+                  firstname: res.data["firstname"],
+                  lastname: res.data["lastname"],
+                  phone: res.data["phone"],
+                  password: this.state.password,
+                  token: res.data["token"],
+                });
               },
             },
           ]);
@@ -182,7 +137,7 @@ class SignUp extends React.Component {
           ) : (
             <View>
               <Image
-                source={require("../../assets/logo.jpeg")}
+                source={require("../../assets/logo.png")}
                 style={styles.logo}
                 resizeMode="contain"
               />

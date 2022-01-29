@@ -3,11 +3,9 @@
     "name": "Alkebulan-IMMO",
     "slug": "alkebulan-immo",
     "platforms": [
-      "ios",
-      "android",
-      "web"
+      "android"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -19,15 +17,16 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.metamorphoo.rentapart",
-      "buildNumber": "1.0.0"
-    },
     "android": {
-      "package": "com.metamorphoo.rentapart",
+      "package": "com.alkebulan.immo",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET",
+        "CAMERA"
+      ],
       "versionCode": 1
     },
-    "description": ""
+    "description": "Application permettant de faciliter la recherche et l'aquisition ou lacation de biens immobiliers"
   }
 }
