@@ -12,3 +12,6 @@ web-report/
 
 # macOS
 .DS_Store
+node_modules
+‘~/.npm-global/bin/expo
+‘~/.npm-global/bin/expo-cli
