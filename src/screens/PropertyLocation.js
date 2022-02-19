@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState, useEffect, useCallback} from "react";
+import {useFocusEffect} from '@react-navigation/native';
 import { View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import Property from "../components/Property";
 import Search from "../components/Searching";
@@ -13,214 +14,220 @@ import FilterModal from "../components/FilterModal";
 // Import not find component
 import NotFound from "../components/NotFound";
 import { StatusBar } from "expo-status-bar";
+import { useQuery } from 'react-query';
+import API_CONFIG from "../config/constants";
 
-class PropertyLocation extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      phone: "",
-      password: "",
-      properties: [],
-      isLoading: true,
-      next: null,
-      url: `https://www.alkebulan-immo.com/api/property/list?status=A%20Louer`,
-      isSearching: false,
-    };
-  }
+const PropertyLocation = ({ user, signIn, navigation }) => {
 
-  componentDidMount() {
-    this.getProperties(this.state.url);
-  }
+	const [next, setNext] = useState(null);
+	const [url, setUrl] = useState(`${API_CONFIG.server_url}/api/property/list?status=A%20Louer`);
+	const [isSearching, setIsSearching] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState(null);
 
-  search = (params) => {
-    this.setState({
-      isSearching: !this.state.isSearching,
+
+	const checKParams = (params) => {
+		if (params.minPrice !== undefined && params.minPrice !== null
+			&& params.maxPrice !== undefined && params.maxPrice !== null
+			&& params.propertyType !== undefined && params.propertyType !== null
+			&& params.adresse !== undefined && params.adresse !== null
+			&& params.region !== undefined && params.region !== null) {
+			return true;
+		}
+		return false;
+	}
+
+	const search = async (params) => {
+		if(checKParams(params)) {
+			setIsSearching(true);
+			makeSearchRequest(params);
+			setIsLoading(false);
+			setIsSearching(false);
+		}
+	};
+
+	const closeFilter = () => {
+		setIsSearching(false);
+	};
+
+	const loadMore = () => {
+		if (next != null) {
+			getProperties(next);
+		}
+	};
+
+	const getProperties = async (url) => {
+		const api = axios.create({
+			baseURL: url,
+			headers: {
+				Authorization: `Token ${user.token}`,
+			},
+		});
+		let data = await api
+			.get("")
+			.then((res) => res.data)
+			.catch((error) => {
+				setError(error.response.data);
+				console.log(error);
+			});
+
+		if (data.next != null) {
+			setNext(data.next);
+		} else {
+			setNext(null);
+		}
+		return data.results;
+	};
+
+	const { data, refetch } = useQuery(
+		["properties", url],
+		() => getProperties(url)
+	);
+
+	const makeSearchRequest = (params) => {
+		const { address, region, minPrice, maxPrice, propertyType } = params;
+		let requestUrl = `${API_CONFIG.server_url}/api/property/list?`;
+		if (maxPrice !== Infinity && maxPrice !== NaN) {
+			requestUrl += `maxprice=${parseInt(maxPrice)}&`;
+		}
+		if (minPrice !== 0 && minPrice !== NaN) {
+			requestUrl += `minprice=${parseInt(minPrice)}&`;
+		}
+		if (address !== "" && address !== undefined) {
+			requestUrl += `adresse=${address}&`;
+		}
+		if (region !== "" && region !== undefined) {
+			requestUrl += `region=${region}&`;
+		}
+		if (propertyType !== "" && propertyType !== undefined) {
+			requestUrl += `propertyType=${propertyType}&`;
+		}
+
+		setUrl(requestUrl);
+	};
+
+	useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch();
     });
-    this.makeSearchRequest(params);
-    this.setState({
-      isSearching: !this.state.isSearching,
-    });
-  };
+    return unsubscribe;
+  }, [navigation]);
 
-  makeSearchRequest = (params) => {
-    const {
-      bedrooms,
-      shower,
-      garages,
-      surface,
-      minPrice,
-      maxPrice,
-      propertyType,
-    } = params;
-    let requestUrl = this.state.url + "?";
-    if (maxPrice) {
-      requestUrl += `maxprice=${maxPrice}&`;
-    }
-    if (minPrice) {
-      requestUrl += `minprice=${minPrice}&`;
-    }
-    if (surface) {
-      requestUrl += `surface=${surface}&`;
-    }
-    if (garages) {
-      requestUrl += `surface=${garages}&`;
-    }
-    if (bedrooms) {
-      requestUrl += `bedrooms=${bedrooms}&`;
-    }
-    if (shower) {
-      requestUrl += `shower=${shower}&`;
-    }
-    if (propertyType) {
-      requestUrl += `propertyType=${propertyType}&`;
-    }
 
-    this.setState({
-      properties: [],
-    });
+	if (isLoading) {
+		return (
+			<Search />
+		);
+	}
 
-    this.getProperties(requestUrl);
-  };
+	if (error) {
+		console.log(error);
+	}
 
-  closeFilter = () => {
-    this.setState({
-      isSearching: false,
-    });
-  };
+	if (data && data.length === 0) {
+		return (
+			<NotFound 
+				text='Aucune Propriété disponible'
+				updateData={() => setUrl(`${API_CONFIG.server_url}/api/property/list?status=A%20Louer`)}
+			/>
+		);
+	};
 
-  loadMore = () => {
-    if (this.state.next != null) {
-      this.getProperties(this.state.next);
-    }
-  };
+	return (
+		<View style={styles.container}>
+			<StatusBar
+				style='dark'
+				setStatusBarStyle={{ marginBottom: 50 }}
+			/>
+			<FlatList
+				style={{ backgroundColor: "#fff" }}
+				showsVerticalScrollIndicator={false}
+				keyExtractor={(item) => item.id.toString()}
+				data={data}
+				renderItem={({ item }) => (
+					<Property
+						property={item}
+						navigation={navigation}
+					/>
+				)}
+				onEndReached={loadMore}
+				onEndReachedThreshold={0}
+			/>
+			{!isSearching ? (
+				<TouchableOpacity
+					style={styles.searchIconContainer}
+					onPress={() => setIsSearching(true)}>
+					<Ionicons
+						name='ios-search'
+						size={30}
+						color='white'
+						style={{
+							marginLeft: 5,
+							marginTop: 3,
+							fontWeight: "bold",
+						}}
+					/>
+				</TouchableOpacity>
+			) : null}
 
-  getProperties = async (url) => {
-    const api = axios.create({
-      baseURL: url,
-      headers: {
-        Authorization: `Token ${this.props.user.token}`,
-      },
-    });
-    let data = await api
-      .get("")
-      .then((res) => res.data)
-      .catch((error) => {
-        console.log(error);
-      });
-
-    if (data.next != null) {
-      this.setState({
-        next: data.next,
-      });
-    } else {
-      this.setState({
-        next: null,
-      });
-    }
-    data.results.forEach((property) => {
-      this.setState({
-        properties: [...this.state.properties, property],
-      });
-    });
-    this.setState({
-      isLoading: false,
-    });
-  };
-
-  render() {
-    if (this.state.properties.length === 0 && this.state.isLoading == true) {
-      return <Search />;
-    } else if (
-      this.state.properties.length == 0 &&
-      this.state.isLoading == false
-    ) {
-      return <NotFound text="Aucune Propriété disponible" />;
-    } else {
-      return (
-        <View style={styles.container}>
-          <StatusBar style="dark" setStatusBarStyle={{ marginBottom: 50 }} />
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id.toString()}
-            data={this.state.properties}
-            renderItem={({ item }) => (
-              <View style={styles.space}>
-                <Property property={item} navigation={this.props.navigation} />
-              </View>
-            )}
-            onEndReached={this.loadMore}
-            onEndReachedThreshold={0}
-          />
-          {!this.state.isSearching ? (
-            <TouchableOpacity
-              style={styles.searchIconContainer}
-              onPress={this.search}
-            >
-              <Ionicons
-                name="ios-search"
-                size={40}
-                color="white"
-                style={{ marginLeft: 5, marginTop: 3, fontWeight: "bold" }}
-              />
-            </TouchableOpacity>
-          ) : null}
-
-          {this.state.isSearching === true ? (
-            <FilterModal closeFilter={this.closeFilter} search={this.search} />
-          ) : null}
-        </View>
-      );
-    }
-  }
+			{isSearching === true ? (
+				<FilterModal
+					closeFilter={closeFilter}
+					search={search}
+				/>
+			) : null}
+		</View>
+	);
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    signIn: (user) => dispatch(signIn(user)),
-  };
+	return {
+		signIn: (user) => dispatch(signIn(user)),
+	};
 };
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.auth.user,
-  };
+	return {
+		user: state.auth.user,
+	};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PropertyLocation);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  searchIconContainer: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#5a86d8",
-    zIndex: 1000,
-    width: 65,
-    height: 65,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.37,
-    shadowRadius: 7.49,
-  },
-  space: {
-    marginVertical: 10,
-  },
-  noResult: {
-    fontSize: 22,
-    fontWeight: "400",
-    marginRight: 10,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: "#fff",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	searchIconContainer: {
+		position: "absolute",
+		bottom: 20,
+		right: 20,
+		backgroundColor: "#5a86d8",
+		zIndex: 1000,
+		width: 55,
+		height: 55,
+		borderRadius: 40,
+		justifyContent: "center",
+		alignItems: "center",
+		elevation: 12,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 6,
+		},
+		shadowOpacity: 0.37,
+		shadowRadius: 7.49,
+	},
+	space: {
+		marginVertical: 10,
+		backgroundColor: "#fff",
+	},
+	noResult: {
+		fontSize: 22,
+		fontWeight: "400",
+		marginRight: 10,
+	},
 });

@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 // import utilities
 import { Input } from "react-native-elements";
 // Icon
-import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import { FontAwesome, AntDesign, Ionicons } from "@expo/vector-icons";
 // Import Dropdown
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -25,7 +25,7 @@ class FilterModal extends React.Component {
 		super(props);
 		this.state = {
 			minPrice: 0,
-			maxPrice: 0,
+			maxPrice: Infinity,
 			propertyType: "",
 			adresse: "",
 			region: "",
@@ -37,7 +37,7 @@ class FilterModal extends React.Component {
 	componentDidMount() {
 		Animated.timing(this.state.translateY, {
 			toValue: -screenHeight,
-			duration: 350,
+			duration: 200,
 			useNativeDriver: true,
 		}).start();
 	}
@@ -50,8 +50,7 @@ class FilterModal extends React.Component {
 		}).start();
 		setTimeout(() => {
 			this.props.closeFilter();
-		}, 500);
-		//this.props.closeFilter();
+		}, 100);
 	};
 
 	render() {
@@ -62,50 +61,6 @@ class FilterModal extends React.Component {
 					{ transform: [{ translateY: this.state.translateY }] },
 				]}>
 				<View style={styles.filterZone}>
-					<DropDownPicker
-						items={[
-							{ label: "Studio", value: "Studio" },
-							{
-								label: "Appartement simple",
-								value: "Appartement simple",
-							},
-							{
-								label: "Appartement meublé",
-								value: "Appartement meublé",
-							},
-							{ label: "Villa simple", value: "Villa simple" },
-							{ label: "Villa meublé", value: "Villa meublé" },
-							{ label: "Bureau", value: "Bureau" },
-							{ label: "Terrain", value: "Terrain" },
-							{ label: "Autres bien", value: "Autres bien" },
-						]}
-						placeholder='Type de bien'
-						labelStyle={{
-							fontSize: 17,
-							color: "#000",
-							fontWeight: "400",
-						}}
-						defaultValue={this.state.propertyType}
-						containerStyle={{
-							height: 50,
-							width: screenWidth - 80,
-							marginBottom: 10,
-							marginTop: 10,
-						}}
-						style={{ backgroundColor: "#fff" }}
-						dropDownStyle={{
-							backgroundColor: "#fff",
-							justifyContent: "center",
-							alignItems: "center",
-							width: screenWidth - 80,
-						}}
-						dropDownMaxHeight={400}
-						onChangeItem={(item) =>
-							this.setState({
-								propertyType: item.value,
-							})
-						}
-					/>
 					<DropDownPicker
 						items={[
 							{ label: "Maritime", value: "Maritime" },
@@ -142,13 +97,31 @@ class FilterModal extends React.Component {
 						}
 					/>
 					<Input
-						placeholder='Adresse'
+						placeholder='Type de bien'
 						placeholderTextColor={"black"}
 						inputStyle={styles.input}
 						leftIcon={
 							<FontAwesome
-								name='money'
-								size={30}
+								name='building-o'
+								size={25}
+								color='#5a86d8'
+							/>
+						}
+						containerStyle={styles.elementSpacing}
+						onChangeText={(val) => {
+							this.setState({
+								propertyType: val,
+							});
+						}}
+					/>
+					<Input
+						placeholder='Quartier'
+						placeholderTextColor={"black"}
+						inputStyle={styles.input}
+						leftIcon={
+							<Ionicons
+								name='md-location-outline'
+								size={25}
 								color='#5a86d8'
 							/>
 						}
@@ -166,34 +139,36 @@ class FilterModal extends React.Component {
 						leftIcon={
 							<FontAwesome
 								name='money'
-								size={30}
+								size={25}
 								color='#5a86d8'
 							/>
 						}
+						value={this.state.maxPrice}
 						containerStyle={styles.elementSpacing}
 						keyboardType={"numeric"}
 						onChangeText={(val) => {
 							this.setState({
-								maxPrice: val,
+								maxPrice: val.replace(/[^0-9]/g, ''),
 							});
 						}}
 					/>
 					<Input
-						placeholder='Prix maximum'
+						placeholder='Prix minimum'
 						placeholderTextColor={"black"}
 						inputStyle={styles.input}
 						leftIcon={
 							<FontAwesome
 								name='money'
-								size={30}
+								size={25}
 								color='#5a86d8'
 							/>
 						}
+						value={this.state.minPrice}
 						containerStyle={styles.elementSpacing}
 						keyboardType={"numeric"}
 						onChangeText={(val) => {
 							this.setState({
-								maxPrice: val,
+								minPrice: val.replace(/[^0-9]/g, ''),
 							});
 						}}
 					/>

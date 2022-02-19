@@ -33,6 +33,7 @@ export default function authReducer(state = initialState, action) {
         ...state,
         user: {
           ...state.user,
+          id: action.payload.id,
           firstname: action.payload.firstname,
           lastname: action.payload.lastname,
           phone: action.payload.phone,

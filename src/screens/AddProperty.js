@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 	Alert,
 	TextInput,
+	Image,
 } from "react-native";
 import axios from "axios";
 import { Input } from "react-native-elements";
@@ -20,6 +21,9 @@ import { connect } from "react-redux";
 import Loading from "../components/Loading";
 // Import Dropdown
 import DropDownPicker from "react-native-dropdown-picker";
+// import ImageBrowser
+import ImageBrowserPage from "../components/ImageBrowser";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -27,35 +31,18 @@ const screenHeight = Dimensions.get("window").height;
 class AddProperty extends React.Component {
 	constructor(props) {
 		super(props);
+		const { property } = this.props.route.params || {};
 		this.state = {
-			price: this.props.route.params.property.price
-				? this.props.route.params.property.price
-				: "",
-			title: this.props.route.params.property.title
-				? this.props.route.params.property.title
-				: "",
-			description: this.props.route.params.property.description
-				? this.props.route.params.property.description
-				: "",
-			propertyType: this.props.route.params.property.type
-				? this.props.route.params.property.type
-				: "",
-			status: this.props.route.params.property.status
-				? this.props.route.params.property.status
-				: "",
-			region: this.props.route.params.property.district
-				? this.props.route.params.property.district
-				: "",
-			mainImage: this.props.route.params.property.featured_image
-				? this.props.route.params.property.featured_image
-				: "https://picsum.photos/200/300",
+			price: property?.price ? property?.price : "",
+			address: property?.address ? property?.address : "",
+			description: property?.description ? property?.description : "",
+			propertyType: property?.type ? property?.type : "",
+			status: property?.status ? property?.status : "",
+			region: property?.region ? property?.region : "",
 			isAdding: false,
+			isOpen: false,
+			photos: [],
 		};
-	}
-
-	componentDidMount() {
-		this.getPropertyFeatures();
-		this.getCities();
 	}
 
 	toogleCheck = (id) => {
@@ -66,116 +53,35 @@ class AddProperty extends React.Component {
 		});
 	};
 
-	getPropertyFeatures = async () => {
-		// extract property features if is an update
-		const { property_features } = this.props.route.params.property
-			? this.props.route.params.property
-			: null;
-		// create request
-		const api = axios.create({
-			baseURL: `https://www.alkebulan-immo.com/api/property/list-features/`,
-			headers: {
-				Authorization: `Token ${this.props.user.token}`,
-			},
-		});
-		// send request and get back the property
-		let propertiesFeature = await api
-			.get(`/`)
-			.then((res) => res.data)
-			.catch((error) => {
-				console.log(error.response.data);
-			});
-		if (propertiesFeature) {
-			let features = [];
-			if (property_features) {
-				propertiesFeature.results.forEach((element) => {
-					if (
-						property_features.some((elt) => elt.id === element.id)
-					) {
-						features.push({
-							name: element.name,
-							checked: true,
-							id: element.id,
-						});
-					} else {
-						features.push({
-							name: element.name,
-							checked: false,
-							id: element.id,
-						});
-					}
-				});
-			} else {
-				propertiesFeature.results.forEach((element) => {
-					features.push({
-						name: element.name,
-						checked: false,
-						id: element.id,
-					});
-				});
-			}
-			this.setState({
-				propertiesFeature: features,
-			});
-		} else {
-			console.log("Aucune propriété associé");
-		}
-	};
-
-	getCities = async () => {
-		// create request
-		const api = axios.create({
-			baseURL: `https://www.alkebulan-immo.com/api/property/list-district/`,
-			headers: {
-				Authorization: `Token ${this.props.user.token}`,
-			},
-		});
-		// send request and get back the property
-		let districts = await api
-			.get(`/`)
-			.then((res) => res.data)
-			.catch((error) => {
-				console.log(error.response.data);
-			});
-		if (districts) {
-			let formatedCities = [];
-			districts.results.forEach((element) => {
-				formatedCities.push({ label: element.name, value: element.id });
-			});
-			this.setState({
-				districts: formatedCities,
-			});
-		} else {
-			console.log("Aucun quariter associé");
-		}
-	};
-
 	addProperty = () => {
 		this.createProperty();
 	};
 
-	updateImage = (imageType, image) => {
-		if (imageType == "main") {
-			this.setState({
-				mainImage: image,
-			});
-		} else if (imageType == "second") {
-			this.setState({
-				secondImage: image,
-			});
-		} else if (imageType == "third") {
-			this.setState({
-				thirdImage: image,
-			});
-		} else {
-			return;
+
+	setImages(formData) {
+		const { photos } = this.state;
+		if (photos.length > 0) {
+			formData.append("featured_image", photos[0]);
 		}
+
+		if (photos.length > 1) {
+			for(let i = 1; i < photos.length; i++) {
+				formData.append(`image${i+1}`, photos[i]);
+			}
+		}
+		return formData;
 	};
 
-	getFile = async (url) => {
-		const img_url = url;
-		let result = await fetch(img_url);
-		return result;
+	clearState = () => {
+		this.setState({
+			price: "",
+			address: "",
+			description: "",
+			propertyType: "",
+			status: "",
+			region: "",
+			photos: [],
+		});
 	};
 
 	createProperty = async () => {
@@ -187,25 +93,16 @@ class AddProperty extends React.Component {
 		const {
 			price,
 			description,
-			title,
+			address,
 			propertyType,
 			status,
 			region,
-			mainImage,
 		} = this.state;
-
-		// extract selected features
-		let property_features = [];
-		propertiesFeature.forEach((item) => {
-			if (item.checked == true) {
-				property_features.push(item.id);
-			}
-		});
 
 		let form_data = new FormData();
 
-		if (title) {
-			form_data.append("title", title);
+		if (address) {
+			form_data.append("address", address);
 		}
 		if (description) {
 			form_data.append("description", description);
@@ -214,25 +111,19 @@ class AddProperty extends React.Component {
 			form_data.append("price", price);
 		}
 		if (propertyType) {
-			form_data.append("type", propertyType);
+			form_data.append("property_type", propertyType);
 		}
 		if (status) {
 			form_data.append("status", status);
 		}
 		if (region) {
-			form_data.append("district", region);
+			form_data.append("region", region);
 		}
-		if (mainImage) {
-			form_data.append("featured_image", {
-				uri: mainImage,
-				name: this.state.title + ".jpg",
-				type: "jpeg",
-			});
-		}
+		this.setImages(form_data);	
 		form_data.append("agent", this.props.user.id);
 		// create request
 		const api = axios.create({
-			baseURL: `https://www.alkebulan-immo.com/api/property/create/`,
+			baseURL: `${API_CONFIG.server_url}/api/property/create/`,
 			headers: {
 				Authorization: `Token ${this.props.user.token}`,
 				"Content-Type": "multipart/form-data",
@@ -240,8 +131,8 @@ class AddProperty extends React.Component {
 		});
 
 		// post or put request based on update state
-		if (this.props.route.params.update) {
-			form_data.append("id", this.props.route.params.property.id);
+		if (this.props.route.params?.update || false) {	
+			form_data.append("id", this.props.route.params?.property?.id || "");
 			await api
 				.put(`/`, form_data)
 				.then((res) => {
@@ -265,12 +156,13 @@ class AddProperty extends React.Component {
 							},
 						],
 					);
-					console.log(error);
+					console.log(error.message);
 				});
 		} else {
 			await api
 				.post(`/`, form_data)
 				.then((res) => {
+					this.clearState();
 					Alert.alert(
 						"SUCCÈS!!",
 						"La propriété à été ajouter avec succès",
@@ -291,124 +183,97 @@ class AddProperty extends React.Component {
 		this.setState({
 			isAdding: false,
 		});
+
+	};
+
+	onComplete = (photos) => {
+    this.setState({
+			photos,
+			isOpen: false,
+		});
+  };
+
+	deleteImage = (index) => {
+		const { photos } = this.state;
+		photos.splice(index, 1);
+		this.setState({
+			photos,
+		});
 	};
 
 	render() {
+		const { photos } = this.state;
+		const { update } = this.props.route.params || false;
+		if(this.state.isOpen) {
+			return (
+			<ImageBrowserPage 
+				onComplete={this.onComplete} 
+				close={() => this.setState({
+					isOpen: false,
+				})}
+				oldPhotos={photos}
+			/>
+			);
+		}
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
-				{this.state.isAdding ? (
-					<Loading text='Enrégistrement en cours...' />
+				{this.state.isAdding && this.state.isOpen === false ? (
+					<View style={{
+						width: "100%",
+						height: screenHeight,
+						justifyContent: "center",
+						alignItems: "center",
+						backgroundColor: '#fff',
+					}}>
+					<Image source={require("../../assets/loading.gif")} resizeMode="center" />
+				</View>
 				) : (
 					<View style={[styles.wrapper, styles.container]}>
-						<TouchableOpacity
+						{this.state.photos.length > 0 ? (
+							<>
+							<View style={styles.imageContainer}>
+								{this.state.photos.map((photo, index) => (
+									<View style={{
+										width: 100,
+										height: 100,
+										position: "relative",
+									}}>
+										<TouchableOpacity
+											style={styles.closeWrapper}
+											onPress={() => this.deleteImage(index)}
+										>
+											<Text style={styles.closeText}>x</Text>
+										</TouchableOpacity>
+										<Image source={{ uri: photo.uri }} style={styles.image} key={index} />
+									</View>
+								))}
+							</View>
+							<TouchableOpacity
+								style={styles.addImage}
+								onPress={() =>
+								this.setState({
+									isOpen: true,
+								})}>
+								<Text style={styles.text}>
+									Selectionner ou ajouter d'autre images
+								</Text>
+							</TouchableOpacity>
+							</>
+						) : (
+							<TouchableOpacity
 							style={styles.selectImages}
 							onPress={() =>
-								this.props.navigation.push("ImageBrowser")
-							}>
-							<Text style={styles.selectImagesText}>
-								Ajouter des photos
-							</Text>
-						</TouchableOpacity>
-						<DropDownPicker
-							items={[
-								{ label: "Studio", value: "Studio" },
-								{
-									label: "Appartement simple",
-									value: "Appartement simple",
-								},
-								{
-									label: "Appartement meublé",
-									value: "Appartement meublé",
-								},
-								{
-									label: "Villa simple",
-									value: "Villa simple",
-								},
-								{
-									label: "Villa meublé",
-									value: "Villa meublé",
-								},
-								{ label: "Bureau", value: "Bureau" },
-								{ label: "Terrain", value: "Terrain" },
-								{ label: "Autres bien", value: "Autres bien" },
-							]}
-							placeholder='Type de bien'
-							labelStyle={{
-								fontSize: 17,
-								color: "#000",
-								fontWeight: "400",
-							}}
-							defaultValue={this.props.route.params.property.type}
-							containerStyle={{
-								height: 50,
-								width: screenWidth - 40,
-								marginVertical: 10,
-							}}
-							showArrowIcon={false}
-							style={{ backgroundColor: "#fff" }}
-							dropDownStyle={{
-								backgroundColor: "#fff",
-								justifyContent: "center",
-								alignItems: "center",
-								width: screenWidth - 40,
-							}}
-							dropDownMaxHeight={300}
-							onChangeItem={(item) => {
-								if (item.value == "Une pièce") {
-									this.setState({
-										propertyType: item.value,
-										bedrooms: 1,
-									});
-								} else if (item.value == "Chambre Salon") {
-									this.setState({
-										propertyType: item.value,
-										bedrooms: 2,
-									});
-								} else if (item.value == "2 chambres Salon") {
-									this.setState({
-										propertyType: item.value,
-										bedrooms: 3,
-									});
-								} else {
-									this.setState({
-										propertyType: item.value,
-									});
-								}
-							}}
-						/>
-						<DropDownPicker
-							items={[
-								{ label: "Location", value: "A Louer" },
-								{ label: "Vente", value: "A Vendre" },
-								{ label: "Baille", value: "A Bailler" },
-								{ label: "Financement", value: "Financement" },
-							]}
-							placeholder='Titre (status du bien)'
-							labelStyle={{
-								fontSize: 17,
-								color: "#000",
-								fontWeight: "400",
-							}}
-							defaultValue={this.props.route.params.property.type}
-							containerStyle={{
-								height: 50,
-								width: screenWidth - 40,
-								marginVertical: 10,
-							}}
-							style={{ backgroundColor: "#fff" }}
-							dropDownStyle={{
-								backgroundColor: "#fff",
-								justifyContent: "center",
-								alignItems: "center",
-								width: screenWidth - 40,
-							}}
-							dropDownMaxHeight={300}
-							onChangeItem={(item) =>
 								this.setState({
-									status: item.value,
+									isOpen: true,
 								})
-							}
-						/>
+							}>
+							<>
+								<Text style={styles.selectImagesText}>
+									Ajouter des photos
+								</Text>
+							</>
+						</TouchableOpacity>
+						)}
 						<DropDownPicker
 							items={[
 								{ label: "Maritime", value: "Maritime" },
@@ -443,13 +308,63 @@ class AddProperty extends React.Component {
 								})
 							}
 						/>
+						<DropDownPicker
+							items={[
+								{ label: "Location", value: "A Louer" },
+								{ label: "Vente", value: "A Vendre" },
+								{ label: "Baille", value: "A Bailler" },
+							]}
+							placeholder='Status du bien'
+							labelStyle={{
+								fontSize: 17,
+								color: "#000",
+								fontWeight: "400",
+							}}
+							defaultValue={this.state.status || ""}
+							containerStyle={{
+								height: 50,
+								width: screenWidth - 40,
+								marginVertical: 10,
+							}}
+							style={{ backgroundColor: "#fff" }}
+							dropDownStyle={{
+								backgroundColor: "#fff",
+								justifyContent: "center",
+								alignItems: "center",
+								width: screenWidth - 40,
+							}}
+							dropDownMaxHeight={300}
+							onChangeItem={(item) =>
+								this.setState({
+									status: item.value,
+								})
+							}
+						/>
 						<Input
-							placeholder='Nom de la propriété'
+							placeholder='Type de bien'
 							placeholderTextColor={"black"}
 							inputStyle={{ color: "black", marginLeft: 5 }}
 							leftIcon={
-								<FontAwesome
-									name='home'
+								<FontAwesome name="building-o" size={24} color="#5a86d8" />
+							}
+							containerStyle={[
+								styles.elementSpacing,
+								{ marginTop: 5 },
+							]}
+							onChangeText={(val) => {
+								this.setState({
+									propertyType: val,
+								});
+							}}
+							defaultValue={this.state.propertyType.toString()}
+						/>
+						<Input
+							placeholder='Quartier'
+							placeholderTextColor={"black"}
+							inputStyle={{ color: "black", marginLeft: 5 }}
+							leftIcon={
+								<Ionicons
+									name='md-location-outline'
 									size={25}
 									color='#5a86d8'
 								/>
@@ -460,10 +375,10 @@ class AddProperty extends React.Component {
 							]}
 							onChangeText={(val) => {
 								this.setState({
-									title: val,
+									address: val,
 								});
 							}}
-							defaultValue={this.state.title.toString()}
+							defaultValue={this.state.address.toString()}
 						/>
 						<Input
 							placeholder='Prix'
@@ -494,6 +409,7 @@ class AddProperty extends React.Component {
 						<TextInput
 							multiline
 							placeholder='Description'
+							defaultValue={this.state.description.toString()}
 							style={styles.input}
 							onChangeText={(text) =>
 								this.setState({ description: text })
@@ -509,7 +425,7 @@ class AddProperty extends React.Component {
 								style={{ marginTop: 3 }}
 							/>
 							<Text style={styles.loginText}>
-								{this.props.route.params.update
+								{update
 									? "Mettre à jour"
 									: "Ajouter la propriété"}
 							</Text>
@@ -593,4 +509,57 @@ const styles = StyleSheet.create({
 		color: "#c9c9c9",
 		fontSize: 14,
 	},
+	imageContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		flexWrap: "wrap",
+		width: "100%",
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "#c9c9c9",
+		borderRadius: 10,
+		marginBottom: 20,
+	},
+	image: {
+		width: 100,
+		height: 95,
+		borderWidth: 1,
+		borderColor: "#ddd",
+	},
+	text: {
+		width: "100%",
+		textAlign: "center",
+		fontSize: 14,
+		color: "#fff",
+	},
+	addImage: {
+		width: "100%",
+		backgroundColor: "#203260",
+		alignItems: "center",
+		marginBottom: 20,
+		padding: 10,
+		borderRadius: 10,
+	},
+	closeWrapper: {
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 10,
+		width: 20,
+		height: 20,
+		position: "absolute",
+		top: 5,
+		right: 5,
+		color: "#fff",
+		backgroundColor: "#5a86d8",
+		zIndex: 10,
+	},
+	closeText: {
+		color: "white",
+		position: "absolute",
+		top: -1,
+		right: 5,
+		fontSize: 16,
+	}
 });

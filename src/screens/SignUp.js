@@ -20,6 +20,7 @@ import { signUp, setUserType } from "../actions/authAction";
 import { connect } from "react-redux";
 // loading component
 import Loading from "../components/Loading";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -54,7 +55,7 @@ class SignUp extends React.Component {
     if (this.isValidCredentials()) {
       // create request
       const api = axios.create({
-        baseURL: `https://www.alkebulan-immo.com/api/operations/register/`,
+        baseURL: `${API_CONFIG.server_url}/api/operations/register/`,
       });
       // send request for a visit on the current property
       await api

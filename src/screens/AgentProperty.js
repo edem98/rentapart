@@ -1,83 +1,67 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
-  Text,
-  Alert,
 } from "react-native";
 import Property from "../components/PropertySwitch";
 import axios from "axios";
 // import auth action
 import { signIn } from "../actions/authAction";
 import { connect } from "react-redux";
-// Icon
-import { Ionicons } from "@expo/vector-icons";
 // Not found and search component
 import Search from "../components/Searching";
 import NotFound from "../components/NotFound";
+import { useQuery } from 'react-query';
+import API_CONFIG from "../config/constants";
 
-class AgentProperty extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      phone: "",
-      password: "",
-      properties: [],
-      isLoading: true,
-      next: null,
-      url: `https://www.alkebulan-immo.com/api/property/agent-property-list`,
-      isSearching: false,
-    };
-  }
+const AgentProperty = ({ user, navigation }) => {
 
-  componentDidMount() {
-    this.getProperties(this.state.url);
-  }
+  const [properties, setProperties] = useState([]);
+  const [isLoading, setIsloading] = useState(true);
+  const [next, setNext] = useState(null);
+  const [url, setUrl] = useState(`${API_CONFIG.server_url}/api/property/agent-property-list`);
 
-  loadMore = () => {
-    if (this.state.next != null) {
-      this.getProperties(this.state.next);
+  useEffect(() => {
+    getProperties(url);
+  }, [url]);
+
+  const loadMore = () => {
+    if (next != null) {
+      getProperties(next);
     }
   };
 
-  toogleProperty = (id) => {
-    let properties = this.state.properties;
-    properties.forEach((item) => {
-      if (item.id == id) {
-        item.is_active = !item.is_active;
-        this.updateDatabase(id);
+  const toogleProperty = (id, newProperties) => {
+    newProperties.forEach((item) => {
+      if (item.id === id) {
+        updateDatabase(id);
       }
-    });
-
-    this.setState({
-      properties: properties,
     });
   };
 
-  updateDatabase = async (id) => {
+  const updateDatabase = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/property/toggle-property-active/${id}`,
+      baseURL: `${API_CONFIG.server_url}/api/property/toggle-property-active/${id}`,
       headers: {
-        Authorization: `Token ${this.props.user.token}`,
+        Authorization: `Token ${user.token}`,
       },
     });
     // send request and get back the agent in charge of the property
     await api
       .put(`/`)
-      .then((res) => console.log(res.data["response"]))
+      .then((res) => refetch())
       .catch((error) => {
         console.log(error.response.data);
       });
   };
 
-  getProperties = async (url) => {
+  const getProperties = async (url) => {
     const api = axios.create({
       baseURL: url,
       headers: {
-        Authorization: `Token ${this.props.user.token}`,
+        Authorization: `Token ${user.token}`,
       },
     });
     let data = await api
@@ -88,53 +72,54 @@ class AgentProperty extends React.Component {
       });
 
     if (data.next != null) {
-      this.setState({
-        next: data.next,
-      });
+      setNext(data.next);
     } else {
-      this.setState({
-        next: null,
-      });
+      setNext(null)
     }
-    data.results.forEach((property) => {
-      this.setState({
-        properties: [...this.state.properties, property],
-      });
-    });
-    this.setState({
-      isLoading: false,
-    });
+    setIsloading(false);
+    return data.results;
   };
 
-  render() {
-    if (this.state.properties.length === 0 && this.state.isLoading == true) {
-      return <Search />;
-    } else if (
-      this.state.properties.length == 0 &&
-      this.state.isLoading == false
-    ) {
-      return <NotFound text="Aucune propriété ajoutée" />;
-    }
-    return (
-      <View style={styles.container}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id.toString()}
-          data={this.state.properties}
-          renderItem={({ item }) => (
-            <Property
-              property={item}
-              navigation={this.props.navigation}
-              toogleProperty={this.toogleProperty}
-            />
-          )}
-          onEndReached={this.loadMore}
-          onEndReachedThreshold={0}
-        />
-      </View>
-    );
+  const { data, refetch } = useQuery(
+		["agent-properties", url],
+		() => getProperties(url)
+	);
+
+	useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  if (data && data.length === 0 && isLoading == true) {
+    return <Search />;
+  } else if (
+    data && data.length == 0 &&
+    isLoading == false
+  ) {
+    return <NotFound text="Aucune propriété ajoutée" />;
   }
-}
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id.toString()}
+        data={data}
+        renderItem={({ item }) => (
+          <Property
+            property={item}
+            navigation={navigation}
+            toogleProperty={() => toogleProperty(item.id, data)}
+          />
+        )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0}
+      />
+    </View>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {

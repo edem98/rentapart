@@ -10,6 +10,7 @@ import VisitScheduled from "../components/VisitComponent";
 import Search from "../components/Searching";
 // not found
 import NotFound from "../components/NotFound";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -51,7 +52,7 @@ class ScheduledVisit extends React.Component {
   setVisitDone = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/set-visit-done/${id}/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/set-visit-done/${id}/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -84,7 +85,7 @@ class ScheduledVisit extends React.Component {
 
   getVisits = async () => {
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/get-scheduled-visit/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/get-scheduled-visit/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -110,7 +111,7 @@ class ScheduledVisit extends React.Component {
     if (this.state.visits.length == 0 && this.state.isLoading == true) {
       return <Search />;
     } else if (this.state.visits.length == 0 && this.state.isLoading == false) {
-      return <NotFound text="Aucun rendez-vous programmé" />;
+      return <NotFound text="Aucun rendez-vous programmé" updateData={() => null} />;
     } else {
       return (
         <View style={styles.container}>

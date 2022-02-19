@@ -10,6 +10,10 @@ import thunk from "redux-thunk";
 import { persistReducer, persistStore } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PersistGate } from "redux-persist/integration/react";
+import { NavigationContainer } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+console.disableYellowBox = true;
 
 const persistConfig = {
   key: "root",
@@ -19,6 +23,8 @@ const persistConfig = {
 
 // import {YellowBox} from 'react-native';
 // YellowBox.ignoreWarnings(['useNativeDriver']);
+
+const queryClient = new QueryClient();
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -38,7 +44,9 @@ class AppWrapper extends React.Component {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </PersistGate>
       </Provider>
     );

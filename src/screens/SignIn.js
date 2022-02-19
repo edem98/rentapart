@@ -18,6 +18,7 @@ import { signIn, setUserType } from "../actions/authAction";
 import { connect } from "react-redux";
 // loading component
 import Loading from "../components/Loading";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -43,9 +44,9 @@ class SignIn extends React.Component {
   setUser = async (token) => {
     let url = "";
     if (this.props.userType === "client") {
-      url = `https://www.alkebulan-immo.com/api/operations/client/account/`;
+      url = `${API_CONFIG.server_url}/api/operations/client/account/`;
     } else if (this.props.userType === "agent") {
-      url = `https://www.alkebulan-immo.com/api/operations/agent/account/`;
+      url = `${API_CONFIG.server_url}/api/operations/agent/account/`;
     } else {
       console.log("error occured");
       console.log(url);
@@ -82,7 +83,7 @@ class SignIn extends React.Component {
   fetchUserType = async (token) => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/account/type/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/account/type/`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -105,7 +106,7 @@ class SignIn extends React.Component {
     if (this.isValidCredentials()) {
       // create request
       const api = axios.create({
-        baseURL: `https://www.alkebulan-immo.com/api/operations/login/`,
+        baseURL: `${API_CONFIG.server_url}/api/operations/login/`,
       });
       // send request for a visit on the current property
       await api

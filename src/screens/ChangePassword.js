@@ -45,7 +45,7 @@ class ChangePassword extends React.Component {
     });
     if (this.isValidCredentials()) {
       let url =
-        "https://www.alkebulan-immo.com/api/operations/user-change-password/";
+        `${API_CONFIG.server_url}/api/operations/user-change-password/`;
 
       // create request
       const api = axios.create({

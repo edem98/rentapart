@@ -19,6 +19,8 @@ import { StatusBar } from "expo-status-bar";
 // import auth action
 import { updateUser } from "../actions/authAction";
 import { connect } from "react-redux";
+import API_CONFIG from "../config/constants";
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -94,9 +96,9 @@ class ProfileScreen extends React.Component {
     if (this.isValidCredentials()) {
       let url = "";
       if (this.props.userType === "client") {
-        url = `https://www.alkebulan-immo.com/api/operations/client/account/update/`;
+        url = `${API_CONFIG.server_url}/api/operations/client/account/update/`;
       } else {
-        url = `https://www.alkebulan-immo.com/api/operations/agent/account/update/`;
+        url = `${API_CONFIG.server_url}/api/operations/agent/account/update/`;
       }
       // create request
       const api = axios.create({

@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { Image, CheckBox, Rating } from "react-native-elements";
 import Divider from "./Divider";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 // const screenHeight = Math.round(Dimensions.get("window").height);
@@ -38,7 +39,7 @@ const VisitScheduled = ({
   async function getProperty(propertyid) {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/property/${propertyid}/`,
+      baseURL: `${API_CONFIG.server_url}/api/property/${propertyid}/`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -65,7 +66,7 @@ const VisitScheduled = ({
   async function extractClient(clientId) {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/client/account-id/${clientId}`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/client/account-id/${clientId}`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -87,7 +88,7 @@ const VisitScheduled = ({
   async function extractAgent(id) {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/agent/account-id/${id}`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/agent/account-id/${id}`,
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -110,7 +111,7 @@ const VisitScheduled = ({
     console.log(id);
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/client-rate-visit/${id}/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/client-rate-visit/${id}/`,
       headers: {
         Authorization: `Token ${token}`,
       },

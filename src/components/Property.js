@@ -9,14 +9,22 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Image } from "react-native-elements";
-import Divider from "./Divider";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
-const screenHeight = Math.round(Dimensions.get("window").height);
+
+const reduceDescrition = (description) => {
+  if (description.length > 50) {
+    return description.substring(0, 50) + "...";
+  } else {
+    return description;
+  }
+}
 
 const Property = ({ property, navigation }) => {
   function formatPrice(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if(x !== null){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   }
 
   return (
@@ -37,21 +45,10 @@ const Property = ({ property, navigation }) => {
       <TouchableWithoutFeedback onPress={() => console.log("Stauts")}>
         <Text style={styles.status}>{property.status}</Text>
       </TouchableWithoutFeedback>
-      <View style={styles.featureZone}>
-        <Text style={styles.propertyName}>{property.title}</Text>
-        <View style={styles.features}>
-          <Text style={styles.propertyFeatures}>
-            Chambres: {property.bedrooms} -
-          </Text>
-          <Text style={styles.propertyFeatures}>
-            Douches: {property.bathrooms} -
-          </Text>
-          <Text style={styles.propertyFeatures}>
-            Garages: {property.garages}
-          </Text>
-        </View>
+      <View style={styles.info}>
+        <Text style={styles.title}>Type de bien: {property.property_type}</Text>
+        <Text style={styles.description}>{reduceDescrition(property.description)}</Text>
       </View>
-      <Divider />
       <View style={styles.priceZone}>
         <Text style={styles.priceText}>
           {formatPrice(property.price)} Francs CFA
@@ -75,7 +72,7 @@ const Property = ({ property, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    maxHeight: 320,
+    minHeight: 320,
     width: screenWidth - 20,
     alignSelf: "center",
     borderWidth: 2,
@@ -94,7 +91,6 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 170,
-    position: "absolute",
     top: 0,
     left: 0,
     width: screenWidth - 20,
@@ -120,7 +116,6 @@ const styles = StyleSheet.create({
   },
   featureZone: {
     height: 90,
-    marginTop: 150,
     width: screenWidth - 20,
     backgroundColor: "#fff",
   },
@@ -158,19 +153,27 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#5a86d8",
-    marginTop: 15,
     width: 150,
   },
   moreInfo: {
     fontSize: 20,
     fontWeight: "500",
     color: "#fff",
-    marginTop: 17,
     height: 40,
     width: 150,
     padding: 5,
     textAlign: "center",
     backgroundColor: "#ff6363",
+  },
+  info: {
+    padding: 10,
+  },
+  title: {
+    fontSize: 18,
+  },
+  description: {
+    fontSize: 15,
+    marginTop: 5,
   },
 });
 

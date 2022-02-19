@@ -12,9 +12,9 @@ import {
   Linking,
 } from "react-native";
 import { Image } from "react-native-elements";
-import Feature from "../components/PropertyFeature";
-import Commodity from "../components/Commodity";
+import { EvilIcons, Ionicons } from '@expo/vector-icons';
 import axios from "axios";
+import API_CONFIG from "../config/constants";
 
 // import auth action
 import { signIn } from "../actions/authAction";
@@ -33,11 +33,15 @@ class PropertyDetail extends React.Component {
       images: [],
       feature: [],
       agent: {},
+      ref: null,
+      dataSourceCords: [],
+      scrollIndex: 0,
       agentAvatar:
         "http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png",
       visitAsked: this.props.route.params.visitAsked,
     };
   }
+  
 
   componentDidMount() {
     const propertyId = this.props.route.params.propertyId;
@@ -59,18 +63,12 @@ class PropertyDetail extends React.Component {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  extractFeatures = (property) => {
-    this.setState({
-      feature: property.property_features,
-    });
-  };
-
   extractAgent = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/agent/account-id/${id}`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/agent/account-id/${id}`,
       headers: {
-        Authorization: "Token b417a0b5827334c0657861a4dd148741ca517ddf",
+        Authorization: `Token ${this.props.user.token}`,
       },
     });
     // send request and get back the agent in charge of the property
@@ -92,44 +90,27 @@ class PropertyDetail extends React.Component {
 
   extractImage = (property) => {
     let property_images = [];
-    if (property.second_image && property.third_image) {
+    if (property.featured_image) {
       property_images.push(
-        "http://rentapart.herokuapp.com" + property.featured_image
-      );
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.second_image
-      );
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.third_image
-      );
-    } else if (property.second_image && !property.third_image) {
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.featured_image
-      );
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.second_image
-      );
-    } else if (!property.second_image && property.third_image) {
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.featured_image
-      );
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.third_image
-      );
-    } else {
-      property_images.push(
-        "http://rentapart.herokuapp.com" + property.featured_image
+      `${API_CONFIG.server_url}` +  property.featured_image
       );
     }
+    for (let i = 1; i < 10; i++) {
+      if (property[`image${i+1}`]){
+        property_images.push(
+          `${API_CONFIG.server_url}` +  property[`image${i+1}`]
+        );
+      }
+    }
     this.setState({
-      images: property_images.reverse(),
+      images: property_images,
     });
   };
 
   getProperty = async (id) => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/property/${id}`,
+      baseURL: `${API_CONFIG.server_url}/api/property/${id}`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -143,7 +124,6 @@ class PropertyDetail extends React.Component {
       });
     if (property) {
       this.extractImage(property);
-      this.extractFeatures(property);
       this.extractAgent(property.agent);
       this.setState({
         property: property,
@@ -157,7 +137,7 @@ class PropertyDetail extends React.Component {
   sendVisitRequest = async () => {
     // create request
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/schedule-visit/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/schedule-visit/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`
       },
@@ -240,9 +220,19 @@ class PropertyDetail extends React.Component {
     }
   }
 
+  scrollHandlher = () => {
+    this.state.ref.scrollTo({
+      y: 0,
+      x: this.state.dataSourceCords[this.state.scrollIndex],
+      animate: true,
+    })
+  };
+
   render() {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{
+        backgroundColor: '#fff',
+      }}>
         <TouchableWithoutFeedback>
           <Text style={styles.status}>{this.state.property.status}</Text>
         </TouchableWithoutFeedback>
@@ -256,25 +246,40 @@ class PropertyDetail extends React.Component {
             snapToInterval={screenWidth}
             decelerationRate="fast"
             horizontal
+            showsHorizontalScrollIndicator={false}
+            ref={(ref) => this.setState({ ref: ref })}
           >
-            {this.state.images.map((source, index) => {
+            {this.state.images.length === 0 ? (
+              <Image style={{ width: '100%', height: 300}} source={{uri: 'https://via.placeholder.com/300'}} />
+            ):
+            this.state.images.map((source, index) => {
               return (
-                <View key={index}>
+                <View
+                onLayout={(event) => {
+                  const layout = event.nativeEvent.layout;
+                  this.state.dataSourceCords[index] = layout.x;
+                  this.setState({ dataSourceCords: this.state.dataSourceCords });
+                }}
+                key={index}>
                   <Image
                     source={{ uri: source }}
                     style={styles.propertyImage}
-                    PlaceholderContent={<ActivityIndicator />}
+                    PlaceholderContent={<ActivityIndicator size={20} color="#5a86d8" />}
                   />
                 </View>
               );
-            })}
+            })
+            }            
           </ScrollView>
           <View style={styles.propertyDetailZone}>
             <View style={styles.propertyAgentZone}>
               <Image
-                source={{ uri: "http://rentapart.herokuapp.com" + this.state.agentAvatar }}
+                source={{ uri: this.state.agentAvatar 
+                  ? "https://alkebulan-immo.com" + this.state.agentAvatar 
+                  : "https://toppng.com/uploads/preview/instagram-default-profile-picture-11562973083brycehrmyv.png"
+                }}
                 style={styles.agentImage}
-                PlaceholderContent={<ActivityIndicator />}
+                PlaceholderContent={<ActivityIndicator size={20} color="#5a86d8" />}
               />
               <View>
                 <Text style={styles.agentName}>
@@ -290,37 +295,43 @@ class PropertyDetail extends React.Component {
                 {this.state.property.description}
               </Text>
             </View>
-            <View style={styles.caracteristiqueZone}>
-              <Text style={styles.caracteristique}>Commodités</Text>
-              <View style={styles.commodityZone}>
-                {this.state.feature.map((item, index) => {
-                  return <Commodity name={item.name} key={index} />;
-                })}
-              </View>
-            </View>
-            <View style={styles.caracteristiqueZone}>
-              <Text style={styles.caracteristique}>Caractéristiques</Text>
-              <View style={styles.featuresZone}>
-                <Feature
-                  name="Chambres - "
-                  value={this.state.property.bedrooms}
-                />
-                <Feature
-                  name="Douches - "
-                  value={this.state.property.bathrooms}
-                />
-                <Feature
-                  name="Garages - "
-                  value={this.state.property.garages}
-                />
-                <Feature
-                  name="Ménages - "
-                  value={this.state.property.households}
-                />
-              </View>
-            </View>
           </View>
         </View>
+        <TouchableOpacity style={styles.next}
+          onPress={() => {
+            if(this.state.scrollIndex < this.state.images.length-1){
+              this.setState({ scrollIndex: this.state.scrollIndex + 1 }, () => {
+                this.scrollHandlher();
+              });
+            }
+          }}
+        >
+          <EvilIcons name="arrow-right" size={30} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.prev}
+          onPress={() => {
+            if(this.state.scrollIndex > 0){
+              this.setState({ scrollIndex: this.state.scrollIndex - 1 },
+                this.scrollHandlher);
+            }
+          }}
+        >
+          <EvilIcons name="arrow-left" size={30} color="white"/>
+        </TouchableOpacity>
+        <View style={{
+						position: 'absolute',
+						bottom: 20,
+						right: 10,
+						padding: 10,
+						borderRadius: 50,
+						backgroundColor: '#5a86d8',
+					}}>
+						<Ionicons
+							name="arrow-back-outline"
+							size={24} color="white"
+							onPress={() => this.props.navigation.goBack()}
+						/>
+				</View>
       </ScrollView>
     );
   }
@@ -379,6 +390,7 @@ const styles = StyleSheet.create({
   propertyImage: {
     height: 300,
     width: screenWidth,
+    resizeMode: "cover",
   },
   propertyDetailZone: {
     borderTopLeftRadius: 35,
@@ -439,22 +451,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
-  caracteristiqueZone: {
-    padding: 20,
-    marginTop: -30,
+  next: {
+    position: "absolute",
+    right: 15,
+    top: 150,
+    width: 30,
+    height: 30,
+    zIndex: 10,
   },
-  caracteristique: {
-    fontSize: 17,
-    fontWeight: "bold",
-  },
-  featuresZone: {
-    marginTop: 15,
-  },
-  commodityZone: {
-    marginTop: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    width: screenWidth - 20,
-    flexWrap: "wrap",
-  },
+  prev: {
+    position: "absolute",
+    left: 15,
+    top: 150,
+    width: 30,
+    height: 30,
+    zIndex: 10,
+  }
 });

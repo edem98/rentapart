@@ -14,6 +14,11 @@ import {
 import { Image } from "react-native-elements";
 import Divider from "./Divider";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+import API_CONFIG from "../config/constants";
+
+
 
 const screenWidth = Math.round(Dimensions.get("window").width);;
 
@@ -22,40 +27,18 @@ const Property = ({ property, navigation, toogleProperty }) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
+  let payment_uri = `https://paygateglobal.com/v1/page?token=${API_CONFIG.payment_token}&amount=100&description=Property-boost&identifier=${uuidv4()}`;
+
   function _onToggleSwitch() {
     toogleProperty(property.id);
   }
-
-  function sendWhatsAppMessage() {
-    let link = "whatsapp://send?text=&phone=+22892602051";
-    if (link !== undefined) {
-      Linking.canOpenURL(link)
-        .then(supported => {
-          if (!supported) {
-            Alert.alert(
-              'Please install whats app to send direct message to students via whats app'
-            );
-          } else {
-            return Linking.openURL(link);
-          }
-        })
-        .catch(err => console.error('An error occurred', err));
-    } else {
-      console.log('sendWhatsAppMessage -----> ', 'message link is undefined');
-    }
-  };
 
   return (
     <TouchableWithoutFeedback>
       <View
         style={styles.container}
       >
-        <Pressable onPress={() => {
-          navigation.navigate("Acceuil", {
-            screen: "AddProperty",
-            params: { property: property, update: true },
-          });
-        }}>
+        <Pressable onPress={() => null}>
           <Image
             source={{
               uri: property.featured_image
@@ -74,20 +57,6 @@ const Property = ({ property, navigation, toogleProperty }) => {
           <TouchableWithoutFeedback>
             <Text style={styles.status}>{property.status}</Text>
           </TouchableWithoutFeedback>
-          <View style={styles.featureZone}>
-            <Text style={styles.propertyName}>{property.title}</Text>
-            <View style={styles.features}>
-              <Text style={styles.propertyFeatures}>
-                Chambres: {property.bedrooms} -
-              </Text>
-              <Text style={styles.propertyFeatures}>
-                Douches: {property.bathrooms} -
-              </Text>
-              <Text style={styles.propertyFeatures}>
-                Garages: {property.garages}
-              </Text>
-            </View>
-          </View>
           <Divider />
           <View style={styles.priceZone}>
             <Text style={styles.priceText}>
@@ -118,13 +87,22 @@ const Property = ({ property, navigation, toogleProperty }) => {
             />
           </View>
         </Pressable>
-        <TouchableOpacity
-          onPress={sendWhatsAppMessage}
+        {property.featured ? (
+        <View
           style={styles.boostZone}>
-          <Text style={styles.boostText}>
-            Booster la publication
-          </Text>
+            <Text style={styles.boostedText}>
+              publication boostée
+            </Text>
+        </View>
+        ): (
+          <TouchableOpacity
+          onPress={() => navigation.push('Payment', { uri: payment_uri })}
+          style={styles.boostZone}>  
+            <Text style={styles.boostText}>
+              Booster la publication
+            </Text>
         </TouchableOpacity>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -132,17 +110,16 @@ const Property = ({ property, navigation, toogleProperty }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 450,
     width: screenWidth - 20,
     alignSelf: "center",
     borderWidth: 2,
     borderRadius: 10,
     borderColor: "#d3d3d3",
-    marginBottom: 10,
+    marginBottom: 15,
+    paddingBottom: 15,
   },
   image: {
     height: 230,
-    position: "absolute",
     top: 0,
     left: 0,
     width: screenWidth - 20,
@@ -204,7 +181,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   priceText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#5a86d8",
     marginTop: 15,
@@ -238,6 +215,15 @@ const styles = StyleSheet.create({
     width: '95%',
     borderRadius: 30,
   },
+  boostedText: {
+    fontSize: 18,
+    color: "#fff",
+    backgroundColor: "#44BBA4",
+    padding: 8,
+    textAlign: "center",
+    width: '95%',
+    borderRadius: 30,
+  }
 });
 
 export default Property;

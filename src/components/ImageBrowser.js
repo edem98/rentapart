@@ -1,99 +1,100 @@
-import React, { useMemo } from "react";
-import { Text, View, StyleSheet, SafeAreaView, Alert } from "react-native";
-import { AssetsSelector } from "expo-images-picker";
-import { Ionicons } from "@expo/vector-icons";
-import StatusBarPlaceHolder from "./StatusBarPlaceholder";
+import React, { useState } from "react";
+import {
+	Text,
+	View,
+	StyleSheet,
+	SafeAreaView,
+	TouchableOpacity,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { MediaType } from "expo-media-library";
+import { ImageBrowser } from "expo-image-picker-multiple";
+import * as ImageManipulator from 'expo-image-manipulator';
+import { Ionicons } from '@expo/vector-icons';
 
-const ForceInset = {
-	top: "never",
-	bottom: "never",
-};
+export default function ImageBrowserPage({ onComplete, close, oldPhotos }) {
+	const [header, setHeader] = useState();
 
-const _textStyle = {
-	color: "white",
-};
+	const _processImageAsync = async (uri) => {
+    const file = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 600, height: 600 } }],
+      [{ compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }]
+    );
+    return file;
+  };
 
-const _buttonStyle = {
-	backgroundColor: "orange",
-	borderRadius: 5,
-};
+	const imagesCallback = (callback) => {
+		callback
+			.then(async (photos) => {
+				const cPhotos = [...oldPhotos];
+				for (let photo of photos) {
+					const pPhoto = await _processImageAsync(photo.uri);
+					cPhotos.push({
+						uri: pPhoto.uri,
+						name: photo.filename.replace(/HEIC/g, 'jpg'),
+						type: "image/jpg",
+					});
+					onComplete(cPhotos);
+				}
+			})
+			.catch((e) => console.log(e));
+	};
 
-const widgetErrors = {
-	errorTextColor: "black",
-	errorMessages: {
-		hasErrorWithPermissions: "Please Allow media gallery permissions.",
-		hasErrorWithLoading: "There was an error while loading images.",
-		hasErrorWithResizing: "There was an error while loading images.",
-		hasNoAssets: "No images found.",
-	},
-};
 
-const widgetSettings = {
-	getImageMetaData: false, // true might perform slower results but gives meta data and absolute path for ios users
-	initialLoad: 100,
-	assetsType: [MediaType.photo, MediaType.video],
-	minSelection: 1,
-	maxSelection: 10,
-	portraitCols: 4,
-};
 
-const onSuccess = (data) => {
-	Alert.alert("Done", data.length + "Images selected");
-};
+	const updateHandler = (count, onSubmit) => {
+		setHeader(
+			<>
+			<View style={styles.header}>
+				<Text style={styles.headerCountText}>
+					{count} image(s) sélectionnée(s)
+				</Text>
+				<TouchableOpacity
+					onPress={() => onSubmit()}
+					style={styles.headerButton}>
+					<Text style={styles.headerText}>Continuer</Text>
+				</TouchableOpacity>
+			</View>
+			</>
+		)
+	};
 
-const widgetNavigator = {
-	Texts: {
-		finish: "finish",
-		back: "back",
-		selected: "selected",
-	},
-	midTextColor: "black",
-	minSelection: 1,
-	buttonTextStyle: _textStyle,
-	buttonStyle: _buttonStyle,
-	onBack: () => {},
-	onSuccess: (e) => onSuccess(e),
-};
+	const renderSelectedComponent = (number) => (
+		<View style={styles.countBadge}>
+			<Text style={styles.countBadgeText}>{number}</Text>
+		</View>
+	);
 
-const widgetStyles = {
-	margin: 2,
-	bgColor: "white",
-	spinnerColor: "blue",
-	widgetWidth: 99,
-	videoIcon: {
-		Component: Ionicons,
-		iconName: "ios-videocam",
-		color: "tomato",
-		size: 20,
-	},
-	selectedIcon: {
-		Component: Ionicons,
-		iconName: "ios-checkmark-circle-outline",
-		color: "white",
-		bg: "#0eb14970",
-		size: 26,
-	},
-};
-// IOS users , make sure u can use the images uri to upload , if your getting invalid file path or u cant work with asset-library://
-// Use = > getImageMetaData: true which will be little slower but give u also the absolute path of the Asset. just console loge the result to see the localUri
+	const emptyStayComponent = (
+		<Text style={styles.emptyStay}>Aucune image disponible</Text>
+	);
 
-// See => https://docs.expo.dev/versions/latest/sdk/media-library/#assetinfo
-
-export default function ImageBrowser() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
-				<StatusBarPlaceHolder />
 				<View style={styles.container}>
-					<AssetsSelector
-						Settings={widgetSettings}
-						Errors={widgetErrors}
-						Styles={widgetStyles}
-						Navigator={widgetNavigator}
-						// Resize={widgetResize} know how to use first , perform slower results.
+					{header}
+					<ImageBrowser
+						max={10}
+						onChange={updateHandler}
+						callback={imagesCallback}
+						renderSelectedComponent={renderSelectedComponent}
+						emptyStayComponent={emptyStayComponent}
 					/>
+					<View style={{
+						position: 'absolute',
+						bottom: 20,
+						right: 10,
+						padding: 10,
+						borderRadius: 50,
+						backgroundColor: '#5a86d8',
+					}}>
+						<Ionicons
+							name="arrow-back-outline"
+							size={24} color="white"
+							onPress={() => close()}
+						/>
+					</View>
 				</View>
 			</SafeAreaView>
 		</SafeAreaProvider>
@@ -103,5 +104,44 @@ export default function ImageBrowser() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+	},
+	emptyStay: {
+		textAlign: "center",
+	},
+	countBadge: {
+		paddingHorizontal: 8.6,
+		paddingVertical: 5,
+		borderRadius: 50,
+		position: "absolute",
+		right: 3,
+		bottom: 3,
+		justifyContent: "center",
+		backgroundColor: "#0580FF",
+	},
+	countBadgeText: {
+		fontWeight: "bold",
+		alignSelf: "center",
+		padding: "auto",
+		color: "#ffffff",
+	},
+	header: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		height: 50,
+		width: "100%",
+		paddingHorizontal: 10,
+	},
+	headerButton: {
+		backgroundColor: "#0580FF",
+		padding: 5,
+		borderRadius: 5,
+	},
+	headerCountText: {
+		fontSize: 15,
+		color: "#000",
+	},
+	headerText: {
+		color: "#ffffff",
 	},
 });

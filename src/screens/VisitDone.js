@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import VisitScheduled from "../components/VisitComponent";
 // import not found component
 import NotFound from "../components/NotFound";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -41,7 +42,7 @@ class VisitDone extends React.Component {
 
   getVisits = async () => {
     const api = axios.create({
-      baseURL: `https://www.alkebulan-immo.com/api/operations/get-visit-done/`,
+      baseURL: `${API_CONFIG.server_url}/api/operations/get-visit-done/`,
       headers: {
         Authorization: `Token ${this.props.user.token}`,
       },
@@ -67,7 +68,7 @@ class VisitDone extends React.Component {
     if (this.state.visits.length == 0 && this.state.isLoading == true) {
       return <Search />;
     } else if (this.state.visits.length == 0 && this.state.isLoading == false) {
-      return <NotFound text="Aucune Visite effectuée" />;
+      return <NotFound text="Aucune Visite effectuée" updateData={() => null} />;
     } else {
       return (
         <View style={styles.container}>

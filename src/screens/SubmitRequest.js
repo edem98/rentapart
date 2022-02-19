@@ -15,6 +15,7 @@ import { signUp } from "../actions/authAction";
 import { connect } from "react-redux";
 // loading component
 import Loading from "../components/Loading";
+import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -47,7 +48,7 @@ class SubmitRequest extends React.Component {
       isLoading: true,
     });
     if (this.isValidDescription()) {
-      let url = "https://www.alkebulan-immo.com/api/operations/submit-property-request/";
+      let url = `${API_CONFIG.server_url}/api/operations/submit-property-request/`;
       // create request
       const api = axios.create({
         baseURL: url,

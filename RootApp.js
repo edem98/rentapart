@@ -34,7 +34,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import { connect } from "react-redux";
 import Property from "./src/screens/Property";
-import ImageBrowser from "./src/components/ImageBrowser";
+import ImageBrowserPage from "./src/components/ImageBrowser";
+import Payment from "./src/screens/Payment";
 
 const AuthStack = createStackNavigator();
 
@@ -57,31 +58,12 @@ const PropertyStackScreen = () => (
 				headerTitleStyle: { fontSize: 20, marginTop: 2 },
 			})}
 		/>
-
 		<PropertyStack.Screen
 			name='PropertyDetail'
 			component={PropertyDetail}
 			options={() => ({
 				headerShown: false,
 				headerTitleStyle: { fontSize: 20, marginTop: 2 },
-			})}
-		/>
-		<PropertyStack.Screen
-			name='AddProperty'
-			component={AddProperty}
-			options={() => ({
-				headerShown: false,
-				title: "Nouvelle Propriété",
-				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
-			})}
-		/>
-		<PropertyStack.Screen
-			name='ImageBrowser'
-			component={ImageBrowser}
-			options={() => ({
-				headerShown: false,
-				title: "Selectionner les photos",
-				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
 			})}
 		/>
 		<PropertyStack.Screen
@@ -93,6 +75,60 @@ const PropertyStackScreen = () => (
 			})}
 		/>
 	</PropertyStack.Navigator>
+);
+
+const PropertyAgent = createStackNavigator();
+const PropertyAgentScreen = () => (
+	<PropertyAgent.Navigator>
+		<PropertyStack.Screen
+			name='AgentProperty'
+			component={AgentProperty}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
+			})}
+		/>
+		<PropertyStack.Screen
+			name='Payment'
+			component={Payment}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginTop: 2 },
+			})}
+		/>
+		<PropertyStack.Screen
+			name='PropertyDetail'
+			component={PropertyDetail}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginTop: 2 },
+			})}
+		/>
+	</PropertyAgent.Navigator>
+);
+
+const PropertyAddStack = createStackNavigator();
+const PropertyAddStackScreen = () => (
+	<PropertyAddStack.Navigator>
+		<PropertyAddStack.Screen
+			name='AddProperty'
+			component={AddProperty}
+			options={() => ({
+				headerShown: false,
+				title: "Nouvelle Propriété",
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
+			})}
+		/>
+		<PropertyAddStack.Screen
+			name='ImageBrowser'
+			component={ImageBrowserPage}
+			options={() => ({
+				headerShown: false,
+				title: "Selectionner les photos",
+				headerTitleStyle: { fontSize: 15, marginBottom: 2 },
+			})}
+		/>
+	</PropertyAddStack.Navigator>
 );
 
 const PropertyLocationStack = createStackNavigator();
@@ -163,7 +199,6 @@ const PropertyBailStackScreen = () => (
 );
 
 const ScheduledVisitStack = createStackNavigator();
-
 const ScheduledVisitScreen = () => (
 	<ScheduledVisitStack.Navigator>
 		<PropertyStack.Screen
@@ -182,7 +217,6 @@ const ScheduledVisitScreen = () => (
 );
 
 const ProfileStack = createStackNavigator();
-
 const ProfileStackScreen = () => (
 	<ProfileStack.Navigator
 		screenOptions={{
@@ -194,7 +228,6 @@ const ProfileStackScreen = () => (
 );
 
 const VisitDoneStack = createStackNavigator();
-
 const VisitDoneScreen = () => (
 	<VisitDoneStack.Navigator>
 		<VisitDoneStack.Screen
@@ -234,6 +267,14 @@ const DrawerScreen = () => (
 		<Drawer.Screen
 			name='Visites programmées'
 			component={ScheduledVisitScreen}
+		/>
+		<Drawer.Screen
+			name='Ajouter une propriété'
+			component={PropertyAddStackScreen}
+		/>
+		<Drawer.Screen
+			name='Mes Propriétés'
+			component={PropertyAgentScreen}
 		/>
 		<Drawer.Screen name='Visites effectuées' component={VisitDoneScreen} />
 		<Drawer.Screen name='Exprimer un besoin' component={SubmitRequest} />

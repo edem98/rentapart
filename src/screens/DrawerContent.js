@@ -221,7 +221,7 @@ class DrawerContent extends React.Component {
 										label='Mes propriétés'
 										onPress={() => {
 											this.props.navigation.navigate(
-												"AgentProperty",
+												"Mes Propriétés",
 											);
 										}}
 										labelStyle={{ fontSize: 16 }}
@@ -237,7 +237,7 @@ class DrawerContent extends React.Component {
 										label='Ajouter une propriété'
 										onPress={() => {
 											this.props.navigation.navigate(
-												"AddProperty",
+												"Ajouter une propriété",
 												{
 													property: {},
 													update: false,

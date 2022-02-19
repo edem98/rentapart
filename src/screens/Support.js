@@ -22,16 +22,16 @@ class Support extends React.Component {
 		return (
 			<View style={styles.container}>
 				<Text style={{ fontSize: 25, marginBottom: 30 }}>Contact</Text>
-				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%" }}>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
 					Email: alkebulanimmo@gmail.com
 				</Text>
-				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%" }}>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
 					phone: +228 93 93 24 26
 				</Text>
-				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%" }}>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
 					phone: +228 93 93 24 27
 				</Text>
-				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%" }}>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
 					phone: +228 97 76 69 75
 				</Text>
 			</View>
@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: screenWidth,
 		resizeMode: "cover",
-		justifyContent: "center",
+		paddingTop: 50,
+		// justifyContent: "center",
 		alignItems: "center",
 	},
 	logo: {
