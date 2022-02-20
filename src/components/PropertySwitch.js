@@ -24,7 +24,9 @@ const screenWidth = Math.round(Dimensions.get("window").width);;
 
 const Property = ({ property, navigation, toogleProperty }) => {
   function formatPrice(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if(x !== null){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   }
 
   let payment_uri = `https://paygateglobal.com/v1/page?token=${API_CONFIG.payment_token}&amount=100&description=Property-boost&identifier=${uuidv4()}`;

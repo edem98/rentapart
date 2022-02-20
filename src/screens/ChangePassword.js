@@ -163,6 +163,20 @@ class ChangePassword extends React.Component {
             </TouchableOpacity>
           </View>
         )}
+          <View style={{
+              position: 'absolute',
+              bottom: 20,
+              right: 10,
+              padding: 10,
+              borderRadius: 50,
+              backgroundColor: '#5a86d8',
+            }}>
+              <Ionicons
+                name="arrow-back-outline"
+                size={24} color="white"
+                onPress={() => this.props.navigation.goBack()}
+              />
+          </View>
       </View>
     );
   }

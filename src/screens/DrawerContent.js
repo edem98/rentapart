@@ -134,7 +134,7 @@ class DrawerContent extends React.Component {
 										color='black'
 									/>
 								)}
-								label='Profile'
+								label='Profil'
 								onPress={() => {
 									this.props.navigation.navigate("Profile");
 								}}

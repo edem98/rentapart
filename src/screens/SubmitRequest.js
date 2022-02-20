@@ -18,6 +18,7 @@ import Loading from "../components/Loading";
 import API_CONFIG from "../config/constants";
 
 const screenWidth = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 
 class SubmitRequest extends React.Component {
   constructor(props) {
@@ -66,6 +67,9 @@ class SubmitRequest extends React.Component {
       await api
         .post(`/`, data)
         .then((res) => {
+          this.setState({
+						description: "",
+					})
           Alert.alert(
             "SUCCÈS!!",
             "Votre message à été mise à jour avec succès",
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     padding: 10,
     marginBottom: 10,
-    minHeight: 250,
+    minHeight: height * 0.7,
     minWidth: '100%',
     textAlignVertical: 'top',
     borderRadius: 10,

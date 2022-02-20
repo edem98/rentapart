@@ -59,9 +59,11 @@ class PropertyDetail extends React.Component {
     this.willFocusSubscription();
   }
 
-  formatPrice = (x) => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  formatPrice(x) {
+    if(x !== null){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+  }
 
   extractAgent = async (id) => {
     // create request

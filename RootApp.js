@@ -36,6 +36,7 @@ import { connect } from "react-redux";
 import Property from "./src/screens/Property";
 import ImageBrowserPage from "./src/components/ImageBrowser";
 import Payment from "./src/screens/Payment";
+import ResultPage from "./src/screens/ResultPage";
 
 const AuthStack = createStackNavigator();
 
@@ -69,6 +70,14 @@ const PropertyStackScreen = () => (
 		<PropertyStack.Screen
 			name='AgentProperty'
 			component={AgentProperty}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
+			})}
+		/>
+		<PropertyStack.Screen
+			name='ResultPage'
+			component={ResultPage}
 			options={() => ({
 				headerShown: false,
 				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
@@ -150,6 +159,14 @@ const PropertyLocationStackScreen = () => (
 				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
 			})}
 		/>
+		<PropertyStack.Screen
+			name='ResultPage'
+			component={ResultPage}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
+			})}
+		/>
 	</PropertyLocationStack.Navigator>
 );
 
@@ -173,6 +190,14 @@ const PropertyVenteStackScreen = () => (
 				headerTitleStyle: { fontSize: 20, marginTop: 2 },
 			})}
 		/>
+		<PropertyStack.Screen
+			name='ResultPage'
+			component={ResultPage}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
+			})}
+		/>
 	</PropertyVenteStack.Navigator>
 );
 
@@ -193,6 +218,14 @@ const PropertyBailStackScreen = () => (
 			options={() => ({
 				headerShown: false,
 				headerTitleStyle: { fontSize: 20, marginTop: 2 },
+			})}
+		/>
+		<PropertyStack.Screen
+			name='ResultPage'
+			component={ResultPage}
+			options={() => ({
+				headerShown: false,
+				headerTitleStyle: { fontSize: 20, marginBottom: 2 },
 			})}
 		/>
 	</PropertyBailStack.Navigator>

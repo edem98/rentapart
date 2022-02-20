@@ -23,7 +23,6 @@ const PropertyVente = ({ user, signIn, navigation }) => {
 	const [next, setNext] = useState(null);
 	const [url, setUrl] = useState(`${API_CONFIG.server_url}/api/property/list?status=A%20Vendre`);
 	const [isSearching, setIsSearching] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 
 
@@ -33,7 +32,7 @@ const PropertyVente = ({ user, signIn, navigation }) => {
 		setIsSearching(!isSearching);
 	};
 
-	const makeSearchRequest = (params) => {
+	const makeSearchRequest = async (params) => {
 		const { address, region, minPrice, maxPrice, propertyType } = params;
 		let requestUrl = `${API_CONFIG.server_url}/api/property/list?`;
 		if (maxPrice !== Infinity && maxPrice !== NaN) {
@@ -52,7 +51,8 @@ const PropertyVente = ({ user, signIn, navigation }) => {
 			requestUrl += `propertyType=${propertyType}&`;
 		}
 
-		setUrl(requestUrl);
+		const results  = await getProperties(requestUrl);
+		navigation.push('ResultPage', { results });
 	};
 
 	const closeFilter = () => {
@@ -88,7 +88,7 @@ const PropertyVente = ({ user, signIn, navigation }) => {
 		return data.results;
 	};
 
-	const { data, refetch } = useQuery(
+	const { data, refetch, isLoading } = useQuery(
 		["properties", url],
 		() => getProperties(url)
 	);

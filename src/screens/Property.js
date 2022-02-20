@@ -45,7 +45,7 @@ const PropertyHome = ({ user, signIn, navigation }) => {
 		}
 	};
 
-	const makeSearchRequest = (params) => {
+	const makeSearchRequest = async (params) => {
 		const { address, region, minPrice, maxPrice, propertyType } = params;
 		let requestUrl = `${API_CONFIG.server_url}/api/property/list?`;
 		if (maxPrice !== Infinity && maxPrice !== NaN) {
@@ -64,7 +64,8 @@ const PropertyHome = ({ user, signIn, navigation }) => {
 			requestUrl += `propertyType=${propertyType}&`;
 		}
 
-		setUrl(requestUrl);
+		const results  = await getProperties(requestUrl);
+		navigation.push('ResultPage', { results });
 	};
 
 	const closeFilter = () => {
@@ -114,7 +115,6 @@ const PropertyHome = ({ user, signIn, navigation }) => {
 
 
 	if (isLoading) {
-		console.log("loading");
 		return (
 			<Search />
 		);

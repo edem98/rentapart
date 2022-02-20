@@ -92,6 +92,12 @@ const AgentProperty = ({ user, navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
+  if (isLoading) {
+		return (
+			<Search />
+		);
+  };
+
   if (data && data.length === 0 && isLoading == true) {
     return <Search />;
   } else if (
