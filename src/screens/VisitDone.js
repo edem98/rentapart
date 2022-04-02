@@ -54,7 +54,7 @@ class VisitDone extends React.Component {
         console.log(error);
       });
 
-    data.results.forEach((visit) => {
+    data?.results.forEach((visit) => {
       this.setState({
         visits: [...this.state.visits, visit],
       });

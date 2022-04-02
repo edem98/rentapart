@@ -34,6 +34,12 @@ class Support extends React.Component {
 				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
 					phone: +228 97 76 69 75
 				</Text>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
+					phone: +228 79 78 12 33
+				</Text>
+				<Text style={{ fontSize: 17, marginBottom: 10, width: "80%", textAlign: 'center' }}>
+					phone: +228 96 31 96 53
+				</Text>
 			</View>
 		);
 	}

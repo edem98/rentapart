@@ -120,6 +120,7 @@ class SignIn extends React.Component {
               text: "Fermer",
               onPress: () => {
                 this.fetchUserType(res.data["token"]);
+                this.props.navigation.navigate("Acceuil");
               },
             },
           ]);

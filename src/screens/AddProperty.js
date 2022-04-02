@@ -84,6 +84,10 @@ class AddProperty extends React.Component {
 		});
 	};
 
+	componentDidMount(){
+		console.log(this.props.user);
+	}
+
 	createProperty = async () => {
 		// start showing loading component
 		this.setState({
@@ -177,7 +181,7 @@ class AddProperty extends React.Component {
 					alert(
 						"Impossible de mettre à jour la propriété. Nous reglerons ce problème sous peu. Merci de votre patience",
 					);
-					console.log(error);
+					console.log(error.message);
 				});
 		}
 		this.setState({

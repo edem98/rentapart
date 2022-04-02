@@ -167,11 +167,8 @@ class PropertyDetail extends React.Component {
 
   sendWhatsAppMessage = () => {
     let link = "whatsapp://send?text=&phone=+228";
-    if (this.state.property.featured) {
-      link += this.state.agent.phone;
-    } else {
-      link += "92602051";
-    }
+    link += this.state.agent.phone;
+  
     if (link !== undefined) {
       Linking.canOpenURL(link)
         .then(supported => {

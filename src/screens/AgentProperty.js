@@ -118,6 +118,7 @@ const AgentProperty = ({ user, navigation }) => {
             property={item}
             navigation={navigation}
             toogleProperty={() => toogleProperty(item.id, data)}
+            refetch={refetch()}
           />
         )}
         onEndReached={loadMore}

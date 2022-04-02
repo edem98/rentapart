@@ -62,7 +62,7 @@ class SignUp extends React.Component {
         .post(`/`, {
           last_name: this.state.lastname,
           first_name: this.state.firstname,
-          email: this.state.email,
+          email: this.state.email.toLowerCase(),
           phone: this.state.phone,
           password: this.state.password,
           password2: this.state.password2,
@@ -73,16 +73,7 @@ class SignUp extends React.Component {
             {
               text: "Fermer",
               onPress: () => {
-                this.props.setUserType({ userType: this.state.userType });
-                this.props.signUp({
-                  email: res.data["email"],
-                  id: res.data["id"],
-                  firstname: res.data["firstname"],
-                  lastname: res.data["lastname"],
-                  phone: res.data["phone"],
-                  password: this.state.password,
-                  token: res.data["token"],
-                });
+                this.props.navigation.navigate("SignIn");
               },
             },
           ]);
@@ -91,7 +82,7 @@ class SignUp extends React.Component {
           alert(
             "Impossible de créer le compte. Nous reglerons ce problème sous peu. Merci de votre patience"
           );
-          console.log(error);
+          console.log(error.response);
           console.log(this.state);
         });
     } else {
@@ -147,7 +138,7 @@ class SignUp extends React.Component {
                 placeholderTextColor={"white"}
                 inputStyle={{ color: "white", marginLeft: 10 }}
                 value={this.state.lastname}
-                leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+                leftIcon={<FontAwesome name="user-circle" size={30} color="white" />}
                 onChangeText={(lastname) => {
                   this.setState({
                     lastname: lastname,
@@ -159,7 +150,7 @@ class SignUp extends React.Component {
                 placeholderTextColor={"white"}
                 inputStyle={{ color: "white", marginLeft: 10 }}
                 value={this.state.firstname}
-                leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+                leftIcon={<FontAwesome name="user-circle" size={30} color="white" />}
                 onChangeText={(firstname) => {
                   this.setState({
                     firstname: firstname,
@@ -170,11 +161,11 @@ class SignUp extends React.Component {
                 placeholder="Email"
                 placeholderTextColor={"white"}
                 inputStyle={{ color: "white", marginLeft: 10 }}
-                leftIcon={<FontAwesome name="phone" size={30} color="white" />}
+                leftIcon={<FontAwesome name="envelope-o" size={30} color="white" />}
                 value={this.state.email}
-                onChangeText={(email) => {
+                onChangeText={(val) => {
                   this.setState({
-                    email: email.toLowerCase(),
+                    email: val
                   });
                 }}
               />
@@ -271,7 +262,6 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
     alignItems: "center",
-    padding: 30,
   },
   logo: {
     height: screenHeight * 0.2,
@@ -281,6 +271,7 @@ const styles = StyleSheet.create({
   },
   loginZone: {
     flexDirection: "row",
+    marginHorizontal: '4%',
     maxWidth: '90%',
     justifyContent: "center",
     alignItems: "center",
@@ -314,6 +305,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     marginTop: 20,
+    marginLeft: 10,
   },
   checkboxText: {
     color: '#fff',
